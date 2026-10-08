@@ -1,14 +1,19 @@
+import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { whatsappLink } from "@/api/client";
+import { useSite } from "@/lib/siteContent";
 import WhatsAppIcon from "./WhatsAppIcon";
 
 export default function WhatsAppButton() {
+  useSite();
+  const onProductPage = useLocation().pathname.startsWith("/produit/");
   return (
     <motion.a
       href={whatsappLink()}
       target="_blank"
       rel="noopener noreferrer"
-      className="lmd-btn lmd-btn-wine fixed bottom-5 right-5 z-50 !px-4 sm:!px-6 !py-3.5"
+      style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom))" }}
+      className={`lmd-btn lmd-btn-wine fixed right-5 z-50 !px-4 sm:!px-6 !py-3.5 ${onProductPage ? "max-md:hidden" : ""}`}
       aria-label="Nous écrire sur WhatsApp"
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE } from "@/lib/motion";
+import { useSite } from "@/lib/siteContent";
 
 const FIRST = "LaMaison".split("");
 const SECOND = "Dany".split("");
@@ -19,6 +20,7 @@ function Word({ filled }: { filled?: boolean }) {
 
 export default function Preloader({ onDone }: { onDone: () => void }) {
   const reduce = useReducedMotion();
+  const { texts } = useSite();
   const [phase, setPhase] = useState<Phase>("in");
   const [count, setCount] = useState(0);
 
@@ -123,7 +125,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
           </span>
           <span className="w-10 text-right font-text text-sm tabular-nums text-wine">{count}%</span>
         </motion.div>
-        <p className="mt-5 text-sm text-ink-soft">Parfums, cosmétiques, vins &amp; plus</p>
+        <p className="mt-5 text-sm text-ink-soft">{texts.loader_tagline}</p>
       </motion.div>
     </main>
   );

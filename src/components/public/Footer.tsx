@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Download, Mail, MapPin, Phone } from "lucide-react";
 import { whatsappLink } from "@/api/client";
 import { useSite } from "@/lib/siteContent";
+import { usePwaInstall } from "@/lib/pwa";
 import WhatsAppIcon from "./WhatsAppIcon";
 
 export default function Footer() {
-  const { general } = useSite();
+  const { general, texts } = useSite();
+  const pwa = usePwaInstall();
   const socials = [
     { label: "Instagram", href: general.instagram },
     { label: "Facebook", href: general.facebook },
@@ -36,8 +38,21 @@ export default function Footer() {
               className="lmd-btn mt-8 bg-blush text-wine hover:bg-white"
             >
               <WhatsAppIcon className="h-5 w-5" />
-              Commander sur WhatsApp
+              {texts.footer_cta}
             </a>
+            {pwa.canInstall && (
+              <button
+                onClick={pwa.install}
+                className="mt-3 flex items-center gap-2 rounded-full border border-blush/30 px-5 py-2.5 text-[0.95rem] font-medium text-blush transition-colors hover:bg-blush hover:text-wine"
+              >
+                <Download className="h-4 w-4" /> Installer l'application
+              </button>
+            )}
+            {pwa.showIosHint && (
+              <p className="mt-4 max-w-[34ch] text-sm leading-relaxed text-blush/70">
+                Sur iPhone : touchez <strong className="text-blush">Partager</strong>, puis « Sur l'écran d'accueil » pour installer l'application.
+              </p>
+            )}
           </div>
 
           <div>
@@ -63,7 +78,7 @@ export default function Footer() {
               </ul>
             ) : (
               <p className="text-[0.95rem] leading-relaxed text-blush/80 max-w-[28ch]">
-                Choisissez un produit, écrivez-nous sur WhatsApp : nous vous répondons et organisons la suite avec vous.
+                {texts.footer_text}
               </p>
             )}
             {socials.length > 0 && (

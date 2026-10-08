@@ -3,10 +3,12 @@ import { Clock, Mail, MapPin, Phone, Send } from "lucide-react";
 import { api, whatsappLink } from "@/api/client";
 import { useSite } from "@/lib/siteContent";
 import PageHeader from "@/components/public/PageHeader";
+import Seo from "@/components/public/Seo";
+import Rich from "@/components/public/Rich";
 import WhatsAppIcon from "@/components/public/WhatsAppIcon";
 
 export default function ContactPage() {
-  const { general } = useSite();
+  const { general, texts } = useSite();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -35,9 +37,10 @@ export default function ContactPage() {
 
   return (
     <div>
+      <Seo title="Contact" description={texts.contact_intro} path="/contact" />
       <PageHeader
-        title={<>Écrivez-<span className="italic text-rose">nous.</span></>}
-        intro="Une question, un conseil, une commande ? Le plus simple : WhatsApp. Sinon, laissez-nous un message."
+        title={<Rich text={texts.contact_title} />}
+        intro={texts.contact_intro}
       />
 
       <div className="max-w-[1320px] mx-auto px-5 md:px-10 py-16 md:py-24 grid lg:grid-cols-[0.9fr_1.1fr] gap-8 lg:gap-14">
@@ -47,12 +50,10 @@ export default function ContactPage() {
               <WhatsAppIcon className="h-7 w-7 text-blush" />
             </span>
             <h2 className="mt-7 font-brand text-4xl md:text-5xl leading-[1.05]">
-              Le plus rapide,
-              <br />
-              <span className="italic text-blush-edge">c'est WhatsApp.</span>
+              <Rich text={texts.contact_whatsapp_title} accent="italic text-blush-edge" />
             </h2>
             <p className="mt-5 max-w-[34ch] leading-relaxed text-blush/80">
-              Conseil sur un parfum, disponibilité, commande : écrivez-nous, la conversation s'ouvre directement.
+              {texts.contact_whatsapp_text}
             </p>
           </div>
           <ul className="mt-8 space-y-3 text-[0.95rem] text-blush/90">
@@ -77,12 +78,12 @@ export default function ContactPage() {
             className="lmd-btn mt-10 bg-blush text-wine hover:bg-white self-start"
           >
             <WhatsAppIcon className="h-5 w-5" />
-            Discuter sur WhatsApp
+            {texts.contact_whatsapp_button}
           </a>
         </div>
 
         <form onSubmit={handleSubmit} className="rounded-[2rem] bg-white/70 p-8 md:p-12 space-y-5">
-          <h2 className="font-brand text-3xl text-wine">Ou laissez un message</h2>
+          <h2 className="font-brand text-3xl text-wine">{texts.contact_form_title}</h2>
           <div>
             <label htmlFor="c-name" className={label}>Nom *</label>
             <input id="c-name" className="lmd-field" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Votre nom" autoComplete="name" />
@@ -103,7 +104,7 @@ export default function ContactPage() {
           </div>
 
           {error && <p role="alert" className="rounded-2xl bg-rose/10 px-4 py-3 text-sm text-wine">{error}</p>}
-          {sent && <p role="status" className="rounded-2xl bg-wine/8 px-4 py-3 text-sm text-wine">Merci, votre message est bien envoyé. Nous vous répondons très vite.</p>}
+          {sent && <p role="status" className="rounded-2xl bg-wine/8 px-4 py-3 text-sm text-wine">{texts.contact_success}</p>}
 
           <button type="submit" disabled={sending} className="lmd-btn lmd-btn-wine w-full sm:w-auto disabled:opacity-60 disabled:pointer-events-none">
             <Send className="h-4 w-4" />

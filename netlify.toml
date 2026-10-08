@@ -1,0 +1,63 @@
+# Hébergement du site sur Netlify. Voir DEPLOY.md.
+# REMPLACEZ "lmd-api-qixr.onrender.com" par l'adresse de votre API Render (3 endroits ci-dessous).
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Aperçu WhatsApp et Google : les pages produit sont fabriquées par l'API (titre, photo, prix),
+# puis affichées sous l'adresse du site.
+[[redirects]]
+  from = "/produit/*"
+  to = "https://lmd-api-qixr.onrender.com/page/produit/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "https://lmd-api-qixr.onrender.com/sitemap.xml"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/robots.txt"
+  to = "https://lmd-api-qixr.onrender.com/robots.txt"
+  status = 200
+  force = true
+
+# Toutes les autres pages : le site (application React)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/site.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"

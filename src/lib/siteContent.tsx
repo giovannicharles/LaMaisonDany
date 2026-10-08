@@ -11,7 +11,7 @@ import {
   Truck,
   type LucideIcon,
 } from "lucide-react";
-import { api, configureWhatsApp } from "@/api/client";
+import { api, configureWhatsApp, DEFAULT_PRODUCT_TEMPLATE } from "@/api/client";
 import { setCurrency } from "@/lib/utils";
 
 export interface ChatReply {
@@ -26,6 +26,7 @@ export interface SiteContent {
     tagline: string;
     whatsapp_number: string;
     whatsapp_message: string;
+    product_message: string;
     email: string;
     phone: string;
     address: string;
@@ -34,6 +35,8 @@ export interface SiteContent {
     tiktok: string;
     opening_hours: string;
   };
+  texts: Record<string, string>;
+  seo: { title: string; description: string; og_image_url: string };
   hero: {
     line1: string;
     line2: string;
@@ -61,7 +64,47 @@ export interface SiteContent {
   };
 }
 
+export interface TextField {
+  key: string;
+  group: string;
+  label: string;
+  hint?: string;
+  long?: boolean;
+  value: string;
+}
+
+export const TEXT_FIELDS: TextField[] = [
+  { key: "loader_tagline", group: "Écran de chargement", label: "Phrase sous le nom", value: "Parfums, cosmétiques, vins & plus" },
+  { key: "home_categories_title", group: "Accueil", label: "Titre des catégories", value: "Choisissez votre *univers*" },
+  { key: "home_featured_title", group: "Accueil", label: "Titre des coups de cœur", value: "Nos coups de *cœur*" },
+  { key: "home_featured_button", group: "Accueil", label: "Bouton vers la boutique", value: "Toute la boutique" },
+  { key: "home_featured_empty_title", group: "Accueil", label: "Message s'il n'y a pas encore de coups de cœur", value: "La sélection arrive bientôt." },
+  { key: "home_featured_empty_text", group: "Accueil", label: "Texte du message ci-dessus", long: true, value: "En attendant, écrivez-nous : nous vous conseillons sur WhatsApp." },
+  { key: "home_howto_title", group: "Accueil", label: "Titre « Comment commander »", value: "Commander, *c'est simple*" },
+  { key: "home_faq_title", group: "Accueil", label: "Titre de la FAQ", value: "Vos\n*questions*" },
+  { key: "home_faq_text", group: "Accueil", label: "Texte sous la FAQ", long: true, value: "Une autre question ? Notre assistant ou WhatsApp vous répondent." },
+  { key: "shop_title", group: "Boutique", label: "Titre de la page", value: "La *boutique*" },
+  { key: "shop_intro", group: "Boutique", label: "Introduction", long: true, value: "Parfums, cosmétiques, vins et plus encore. Un produit vous plaît ? Un clic, et la conversation WhatsApp s'ouvre." },
+  { key: "shop_search_placeholder", group: "Boutique", label: "Texte dans la recherche", value: "Rechercher : Mixa, parfum, vin rouge…" },
+  { key: "about_title", group: "À propos", label: "Titre de la page", hint: "{brand} est remplacé par le nom de la maison.", value: "À propos de *{brand}*" },
+  { key: "about_story_title", group: "À propos", label: "Titre de l'histoire", value: "Notre *histoire*" },
+  { key: "about_faq_title", group: "À propos", label: "Titre de la FAQ", value: "Questions *fréquentes*" },
+  { key: "about_shop_button", group: "À propos", label: "Bouton vers la boutique", value: "Voir la boutique" },
+  { key: "contact_title", group: "Contact", label: "Titre de la page", value: "Écrivez-*nous.*" },
+  { key: "contact_intro", group: "Contact", label: "Introduction", long: true, value: "Une question, un conseil, une commande ? Le plus simple : WhatsApp. Sinon, laissez-nous un message." },
+  { key: "contact_whatsapp_title", group: "Contact", label: "Titre du bloc WhatsApp", value: "Le plus rapide,\n*c'est WhatsApp.*" },
+  { key: "contact_whatsapp_text", group: "Contact", label: "Texte du bloc WhatsApp", long: true, value: "Conseil sur un produit, disponibilité, commande : écrivez-nous, la conversation s'ouvre directement." },
+  { key: "contact_whatsapp_button", group: "Contact", label: "Bouton WhatsApp", value: "Discuter sur WhatsApp" },
+  { key: "contact_form_title", group: "Contact", label: "Titre du formulaire", value: "Ou laissez un message" },
+  { key: "contact_success", group: "Contact", label: "Message après envoi", long: true, value: "Merci, votre message est bien envoyé. Nous vous répondons très vite." },
+  { key: "footer_text", group: "Pied de page", label: "Texte « Nous joindre » (sans coordonnées)", long: true, value: "Choisissez un produit, écrivez-nous sur WhatsApp : nous vous répondons et organisons la suite avec vous." },
+  { key: "footer_cta", group: "Pied de page", label: "Bouton WhatsApp", value: "Commander sur WhatsApp" },
+];
+
+export const DEFAULT_TEXTS: Record<string, string> = Object.fromEntries(TEXT_FIELDS.map((f) => [f.key, f.value.split("\\n").join("\n")]));
+
 export const DEFAULT_CONTENT: SiteContent = {
+  texts: DEFAULT_TEXTS,
   general: {
     brand: "LaMaison Dany",
     currency: "FCFA",
@@ -69,6 +112,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     whatsapp_number: import.meta.env.VITE_WHATSAPP_NUMBER || "",
     whatsapp_message:
       import.meta.env.VITE_WHATSAPP_DEFAULT_MESSAGE || "Bonjour LaMaison Dany, je souhaite avoir des informations.",
+    product_message: DEFAULT_PRODUCT_TEMPLATE,
     email: "",
     phone: "",
     address: "",
@@ -76,6 +120,12 @@ export const DEFAULT_CONTENT: SiteContent = {
     facebook: "",
     tiktok: "",
     opening_hours: "",
+  },
+  seo: {
+    title: "LaMaison Dany : parfums, cosmétiques, vins et plus encore",
+    description:
+      "Parfums, cosmétiques, vins et bien plus. Choisissez un produit, écrivez-nous sur WhatsApp : nous nous occupons du reste.",
+    og_image_url: "",
   },
   hero: {
     line1: "Parfums, cosmétiques,",
@@ -225,10 +275,8 @@ export function SiteProvider({ children }: { children: ReactNode }) {
 
   const content = useMemo(() => mergeContent(remote), [remote]);
 
-  useEffect(() => {
-    configureWhatsApp(content.general.whatsapp_number, content.general.whatsapp_message);
-  }, [content.general.whatsapp_number, content.general.whatsapp_message]);
-
+  // Synchronous on purpose: children rendered with this content must already read the fresh values.
+  configureWhatsApp(content.general.whatsapp_number, content.general.whatsapp_message, content.general.product_message);
   setCurrency(content.general.currency);
 
   return <SiteContext.Provider value={content}>{children}</SiteContext.Provider>;

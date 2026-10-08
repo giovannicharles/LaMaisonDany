@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ArrowDown, ArrowUp, ImagePlus, Plus, Trash2 } from "lucide-react";
-import { api } from "@/api/client";
-import { DEFAULT_CONTENT, ICON_OPTIONS, mergeContent, type SiteContent } from "@/lib/siteContent";
+import { api, renderProductMessage } from "@/api/client";
+import { DEFAULT_CONTENT, ICON_OPTIONS, TEXT_FIELDS, mergeContent, type SiteContent } from "@/lib/siteContent";
 import { AButton, Field, PageIntro, Panel, Select, TextArea, TextInput, Toggle, useFeedback } from "@/components/admin/kit";
 import { cn } from "@/lib/utils";
 
@@ -9,6 +9,8 @@ type SectionKey = keyof SiteContent;
 
 const TABS: { id: string; label: string; keys: SectionKey[] }[] = [
   { id: "general", label: "Général", keys: ["general"] },
+  { id: "texts", label: "Titres et textes", keys: ["texts"] },
+  { id: "seo", label: "Référencement", keys: ["seo"] },
   { id: "home", label: "Accueil", keys: ["hero", "about_home", "banner"] },
   { id: "reassurance", label: "Atouts", keys: ["reassurance"] },
   { id: "order", label: "Commande", keys: ["how_to_order", "order_dialog"] },
@@ -137,6 +139,22 @@ export default function AdminContent() {
     }
   };
 
+  const seoFileRef = useRef<HTMLInputElement>(null);
+  const uploadSeoImage = async (file?: File) => {
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024) return toast("error", "L'image dépasse 8 Mo.");
+    setUploading(true);
+    try {
+      const res = await api.media.upload(file);
+      set("seo", { og_image_url: res.data.url });
+      toast("success", "Image envoyée. Pensez à enregistrer.");
+    } catch {
+      toast("error", "L'envoi de l'image a échoué.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const uploadHero = async (file?: File) => {
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) return toast("error", "L'image dépasse 5 Mo.");
@@ -191,9 +209,26 @@ export default function AdminContent() {
                 </Field>
                 <Field label="Téléphone affiché" htmlFor="g-ph"><TextInput id="g-ph" value={g.phone} onChange={(e) => set("general", { phone: e.target.value })} /></Field>
               </div>
+              <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-blush px-4 py-3 text-sm text-ink-soft">
+                <span>
+                  Les boutons WhatsApp du site ouvrent la conversation avec{" "}
+                  <strong className="text-wine">{g.whatsapp_number ? `+${g.whatsapp_number}` : "aucun numéro pour le moment"}</strong>.
+                </span>
+                {g.whatsapp_number && (
+                  <a href={`https://wa.me/${g.whatsapp_number}`} target="_blank" rel="noopener noreferrer" className="rounded-full bg-wine px-4 py-1.5 font-medium text-blush hover:bg-wine-deep">
+                    Tester ce numéro
+                  </a>
+                )}
+              </div>
               <Field label="Message WhatsApp par défaut" htmlFor="g-msg" hint="Utilisé par les boutons WhatsApp généraux (hors produit).">
                 <TextArea id="g-msg" rows={2} value={g.whatsapp_message} onChange={(e) => set("general", { whatsapp_message: e.target.value })} />
               </Field>
+              <Field label="Message envoyé pour un produit" htmlFor="g-pm" hint="Mots-clés : {produit} (nom du produit), {prix} (prix, ignoré s'il n'y en a pas) et {quantite}.">
+                <TextArea id="g-pm" rows={2} value={g.product_message} onChange={(e) => set("general", { product_message: e.target.value })} />
+              </Field>
+              <p className="-mt-3 rounded-2xl bg-blush px-4 py-3 text-sm text-ink-soft">
+                <span className="font-medium text-wine">Aperçu :</span> {renderProductMessage(g.product_message, "Mixa Crème Niacinamide", 12000, 1)}
+              </p>
               <div className="grid gap-5 sm:grid-cols-2">
                 <Field label="Email" htmlFor="g-mail"><TextInput id="g-mail" type="email" value={g.email} onChange={(e) => set("general", { email: e.target.value })} /></Field>
                 <Field label="Horaires" htmlFor="g-h"><TextInput id="g-h" value={g.opening_hours} onChange={(e) => set("general", { opening_hours: e.target.value })} placeholder="Lun-Sam, 9h-18h" /></Field>
@@ -203,6 +238,64 @@ export default function AdminContent() {
                 <Field label="Instagram (lien)" htmlFor="g-ig"><TextInput id="g-ig" value={g.instagram} onChange={(e) => set("general", { instagram: e.target.value })} placeholder="https://" /></Field>
                 <Field label="Facebook (lien)" htmlFor="g-fb"><TextInput id="g-fb" value={g.facebook} onChange={(e) => set("general", { facebook: e.target.value })} placeholder="https://" /></Field>
                 <Field label="TikTok (lien)" htmlFor="g-tt"><TextInput id="g-tt" value={g.tiktok} onChange={(e) => set("general", { tiktok: e.target.value })} placeholder="https://" /></Field>
+              </div>
+            </>
+          )}
+
+          {tab === "texts" && (
+            <>
+              <p className="text-ink-soft">
+                Les titres et textes fixes des pages. Astuce : entourez un mot de <strong className="text-wine">*étoiles*</strong> pour l'afficher en italique rose, par exemple « Nos coups de *cœur* ». Laisser un champ vide remet le texte d'origine.
+              </p>
+              {Array.from(new Set(TEXT_FIELDS.map((f) => f.group))).map((group) => (
+                <fieldset key={group} className="space-y-5 rounded-2xl bg-blush/60 p-5 ring-1 ring-blush-edge/60">
+                  <legend className="px-2 font-brand text-xl text-wine">{group}</legend>
+                  {TEXT_FIELDS.filter((f) => f.group === group).map((f) => (
+                    <Field key={f.key} label={f.label} htmlFor={`t-${f.key}`} hint={f.hint}>
+                      {f.long || f.value.includes("\n") ? (
+                        <TextArea id={`t-${f.key}`} rows={2} value={content.texts[f.key] ?? ""} onChange={(e) => set("texts", { [f.key]: e.target.value })} />
+                      ) : (
+                        <TextInput id={`t-${f.key}`} value={content.texts[f.key] ?? ""} onChange={(e) => set("texts", { [f.key]: e.target.value })} />
+                      )}
+                    </Field>
+                  ))}
+                </fieldset>
+              ))}
+            </>
+          )}
+
+          {tab === "seo" && (
+            <>
+              <p className="text-ink-soft">
+                Ce que Google affiche, et ce que voient vos clients quand le lien du site est partagé sur WhatsApp. Chaque produit utilise automatiquement son nom, sa description et sa photo.
+              </p>
+              <Field label={`Titre du site (${content.seo.title.length}/60)`} htmlFor="s-title" hint="Idéalement 60 caractères au plus, avec le nom de la maison et ce que vous vendez.">
+                <TextInput id="s-title" value={content.seo.title} onChange={(e) => set("seo", { title: e.target.value })} maxLength={90} />
+              </Field>
+              <Field label={`Description (${content.seo.description.length}/160)`} htmlFor="s-desc" hint="Une ou deux phrases qui donnent envie de cliquer.">
+                <TextArea id="s-desc" rows={3} value={content.seo.description} onChange={(e) => set("seo", { description: e.target.value })} maxLength={220} />
+              </Field>
+              <Field label="Image de partage" hint="Format paysage conseillé (1200 × 630). Sans image, celle de la maison est utilisée.">
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="flex h-24 w-44 items-center justify-center overflow-hidden rounded-xl bg-blush-deep">
+                    <img src={content.seo.og_image_url || "/og-default.png"} alt="" className="h-full w-full object-cover" />
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <AButton type="button" variant="secondary" disabled={uploading} onClick={() => seoFileRef.current?.click()}>
+                      {uploading ? "Envoi..." : "Changer l'image"}
+                    </AButton>
+                    {content.seo.og_image_url && <AButton type="button" variant="ghost" onClick={() => set("seo", { og_image_url: "" })}>Utiliser l'image par défaut</AButton>}
+                  </div>
+                  <input ref={seoFileRef} type="file" accept="image/*" className="hidden" onChange={(e) => uploadSeoImage(e.target.files?.[0])} />
+                </div>
+              </Field>
+              <div>
+                <p className="mb-2 text-[0.9rem] font-medium text-wine">Aperçu dans Google</p>
+                <div className="rounded-2xl bg-white p-5 ring-1 ring-blush-edge/70">
+                  <p className="truncate text-sm text-[#4d5156]">{typeof window !== "undefined" ? window.location.host : ""}</p>
+                  <p className="mt-1 text-xl leading-snug text-[#1a0dab]">{content.seo.title.slice(0, 60) || "Titre du site"}</p>
+                  <p className="mt-1 text-sm leading-snug text-[#4d5156]">{content.seo.description.slice(0, 160)}</p>
+                </div>
               </div>
             </>
           )}

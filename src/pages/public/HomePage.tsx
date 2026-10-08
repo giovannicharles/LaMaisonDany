@@ -14,6 +14,9 @@ import { ScrollReveal } from "@/components/public/ScrollReveal";
 import { EASE } from "@/lib/motion";
 import { optimizeImage } from "@/lib/images";
 import { iconFor, useSite } from "@/lib/siteContent";
+import Seo from "@/components/public/Seo";
+import { richLines } from "@/components/public/Rich";
+import { organizationLd } from "@/lib/seo";
 import { CreamJar, LipstickArt, PerfumeBottle, WineBottle } from "@/components/art/Bottles";
 
 const fadeUp = (delay: number) => ({
@@ -52,6 +55,7 @@ export default function HomePage() {
 
   return (
     <>
+      <Seo path="/" jsonLd={organizationLd(site, window.location.origin)} />
       {/* Hero */}
       <section ref={heroRef} className="relative overflow-hidden pt-[72px]">
         <motion.div
@@ -168,7 +172,7 @@ export default function HomePage() {
       {/* Categories */}
       <section className="max-w-[1320px] mx-auto px-5 md:px-10 pt-24 md:pt-32">
         <h2 className="font-brand text-4xl md:text-6xl leading-[1.03] text-wine mb-10 md:mb-14">
-          <SplitLines onView lines={[<span key="c">Choisissez votre <span className="italic text-rose">univers</span></span>]} />
+          <SplitLines onView lines={richLines(site.texts.home_categories_title, site.general.brand)} />
         </h2>
         <CategoryTiles />
       </section>
@@ -177,11 +181,11 @@ export default function HomePage() {
       <section className="max-w-[1320px] mx-auto px-5 md:px-10 py-24 md:py-32">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-12">
           <h2 className="font-brand text-4xl md:text-6xl leading-[1.03] text-wine">
-            <SplitLines onView lines={[<span key="c">Nos coups de <span className="italic text-rose">cœur</span></span>]} />
+            <SplitLines onView lines={richLines(site.texts.home_featured_title, site.general.brand)} />
           </h2>
           <ScrollReveal direction="left">
             <Link to="/catalogue" className="lmd-btn lmd-btn-ghost group self-start sm:self-auto">
-              Toute la boutique
+              {site.texts.home_featured_button}
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </ScrollReveal>
@@ -195,8 +199,8 @@ export default function HomePage() {
           </div>
         ) : featured.length === 0 ? (
           <div className="rounded-[1.75rem] bg-white/60 px-6 py-16 text-center">
-            <p className="font-brand text-2xl text-wine">La sélection arrive bientôt.</p>
-            <p className="mt-2 text-ink-soft">En attendant, écrivez-nous : nous vous conseillons sur WhatsApp.</p>
+            <p className="font-brand text-2xl text-wine">{site.texts.home_featured_empty_title}</p>
+            <p className="mt-2 text-ink-soft">{site.texts.home_featured_empty_text}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -270,7 +274,7 @@ export default function HomePage() {
       {/* How to order */}
       <section className="max-w-[1320px] mx-auto px-5 md:px-10 py-24 md:py-32">
         <h2 className="font-brand text-4xl md:text-6xl leading-[1.03] text-wine mb-10 md:mb-14">
-          <SplitLines onView lines={[<span key="h">Commander, <span className="italic text-rose">c'est simple</span></span>]} />
+          <SplitLines onView lines={richLines(site.texts.home_howto_title, site.general.brand)} />
         </h2>
         <HowToOrder />
       </section>
@@ -279,10 +283,10 @@ export default function HomePage() {
       <section className="max-w-[1320px] mx-auto px-5 md:px-10 pb-24 md:pb-32 grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-20">
         <div>
           <h2 className="font-brand text-4xl md:text-5xl leading-[1.05] text-wine">
-            <SplitLines onView lines={["Vos", <span key="q" className="italic text-rose">questions</span>]} />
+            <SplitLines onView lines={richLines(site.texts.home_faq_title, site.general.brand)} />
           </h2>
           <p className="mt-5 max-w-[34ch] text-ink-soft leading-relaxed">
-            Une autre question ? Notre assistant ou WhatsApp vous répondent.
+            {site.texts.home_faq_text}
           </p>
         </div>
         <ScrollReveal>

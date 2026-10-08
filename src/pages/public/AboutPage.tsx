@@ -5,6 +5,8 @@ import { api } from "@/api/client";
 import type { Page } from "@/types";
 import { useSite } from "@/lib/siteContent";
 import PageHeader from "@/components/public/PageHeader";
+import Seo from "@/components/public/Seo";
+import Rich from "@/components/public/Rich";
 import Faq from "@/components/public/Faq";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
 import { CreamJar, PerfumeBottle, WineBottle } from "@/components/art/Bottles";
@@ -23,7 +25,8 @@ export default function AboutPage() {
 
   return (
     <div>
-      <PageHeader title={<>À propos de <span className="italic text-rose">{site.general.brand}</span></>} />
+      <Seo title="À propos" description={page?.content || site.about_home.text} path="/a-propos" />
+      <PageHeader title={<Rich text={site.texts.about_title} />} />
 
       <section className="max-w-[1320px] mx-auto px-5 md:px-10 py-20 md:py-28 grid lg:grid-cols-2 gap-14 lg:gap-24 items-center">
         <ScrollReveal>
@@ -42,7 +45,7 @@ export default function AboutPage() {
 
         <ScrollReveal delay={120}>
           <h2 className="font-brand text-3xl md:text-5xl leading-[1.05] text-wine">
-            Notre <span className="italic text-rose">histoire</span>
+            <Rich text={site.texts.about_story_title} />
           </h2>
           {loading ? (
             <div className="mt-6 space-y-3 animate-pulse">
@@ -75,10 +78,10 @@ export default function AboutPage() {
         <div className="max-w-[1320px] mx-auto px-5 md:px-10 py-20 md:py-28 grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-20">
           <div>
             <h2 className="font-brand text-4xl md:text-5xl leading-[1.05] text-wine">
-              Questions <span className="italic text-rose">fréquentes</span>
+              <Rich text={site.texts.about_faq_title} />
             </h2>
             <Link to="/catalogue" className="lmd-btn lmd-btn-wine mt-8">
-              Voir la boutique
+              {site.texts.about_shop_button}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

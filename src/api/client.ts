@@ -11,25 +11,38 @@ import type {
 
 import { formatPrice } from "@/lib/utils";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:4000/api" : "/api");
 let whatsappNumber: string = import.meta.env.VITE_WHATSAPP_NUMBER || "";
 let whatsappDefaultMessage: string =
   import.meta.env.VITE_WHATSAPP_DEFAULT_MESSAGE || "Bonjour LaMaison Dany, je souhaite avoir des informations.";
 
-export function configureWhatsApp(number: string, message: string) {
+export const DEFAULT_PRODUCT_TEMPLATE = "Bonjour LaMaison Dany, je suis intéressé(e) par « {produit} » ({prix}). Est-il disponible ?";
+let productTemplate = DEFAULT_PRODUCT_TEMPLATE;
+
+export function configureWhatsApp(number: string, message: string, productMessage?: string) {
   if (number) whatsappNumber = number;
   if (message) whatsappDefaultMessage = message;
+  if (productMessage) productTemplate = productMessage;
+}
+
+export function renderProductMessage(template: string, name: string, price: number | null | undefined, quantity = 1): string {
+  const priceText = price != null ? formatPrice(price) : "";
+  let text = template.split("{produit}").join(name).split("{quantite}").join(String(quantity));
+  text = priceText
+    ? text.split("{prix}").join(priceText)
+    : text.replace(/\s*\(\s*\{prix\}\s*\)/g, "").replace(/\s*\{prix\}/g, "");
+  if (quantity > 1 && !template.includes("{quantite}")) text = `${text} Quantité souhaitée : ${quantity}.`;
+  return text.trim();
 }
 
 export function whatsappLink(message?: string): string {
+  if (!whatsappNumber) return "/contact";
   const text = encodeURIComponent(message || whatsappDefaultMessage);
   return `https://wa.me/${whatsappNumber}?text=${text}`;
 }
 
 export function defaultProductMessage(product: Product, quantity = 1): string {
-  const price = product.price ? ` (${formatPrice(product.price)})` : "";
-  const qty = quantity > 1 ? ` en ${quantity} exemplaires` : "";
-  return `Bonjour LaMaison Dany, je suis intéressé(e) par « ${product.name} »${price}${qty}. Est-il disponible ?`;
+  return renderProductMessage(productTemplate, product.name, product.price, quantity);
 }
 
 export function whatsappProductLink(product: Product, message?: string): string {

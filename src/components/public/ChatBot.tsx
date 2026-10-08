@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, MessageCircle, X } from "lucide-react";
-import { api, whatsappLink } from "@/api/client";
+import { api, whatsappLink, whatsappProductLink } from "@/api/client";
 import type { Category, Product } from "@/types";
 import { EASE } from "@/lib/motion";
 import { formatPrice } from "@/lib/utils";
@@ -10,7 +10,6 @@ import { optimizeImage } from "@/lib/images";
 import { track } from "@/lib/track";
 import { useSite } from "@/lib/siteContent";
 import { ProductArt, artKindFor } from "@/components/art/Bottles";
-import { useOrder } from "./OrderDialog";
 import WhatsAppIcon from "./WhatsAppIcon";
 
 interface ChatMessage {
@@ -47,7 +46,6 @@ export default function ChatBot() {
   const site = useSite();
   const bot = site.chatbot;
   const navigate = useNavigate();
-  const { openProduct } = useOrder();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
@@ -217,15 +215,15 @@ export default function ChatBot() {
                               <span className="block truncate font-medium text-wine">{p.name}</span>
                               <span className="block text-sm text-ink-soft">{formatPrice(p.price)}</span>
                             </span>
-                            <button
-                              onClick={() => {
-                                setOpen(false);
-                                openProduct(p);
-                              }}
+                            <a
+                              href={whatsappProductLink(p)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => track("whatsapp_request", p.id)}
                               className="rounded-full bg-wine px-3.5 py-2 text-sm font-medium text-blush hover:bg-wine-deep transition-colors"
                             >
                               Demander
-                            </button>
+                            </a>
                           </li>
                         ))}
                       </ul>
@@ -326,7 +324,8 @@ export default function ChatBot() {
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Fermer le chat" : "Ouvrir le chat"}
         aria-expanded={open}
-        className="fixed bottom-[88px] right-5 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-blush text-wine ring-1 ring-blush-edge shadow-[0_14px_30px_-12px_rgba(107,23,48,0.55)] hover:bg-white transition-colors"
+        style={{ bottom: "calc(88px + env(safe-area-inset-bottom))" }}
+        className="fixed right-5 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-blush text-wine ring-1 ring-blush-edge shadow-[0_14px_30px_-12px_rgba(107,23,48,0.55)] hover:bg-white transition-colors"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 14, delay: 2.3 }}

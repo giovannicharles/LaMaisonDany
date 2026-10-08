@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6b1730" />
+    <meta name="robots" content="noindex" />
+    <title>Hors connexion | LaMaison Dany</title>
+    <style>
+      @font-face { font-family: "Bodoni Moda"; font-weight: 400 600; font-display: swap; src: url("/fonts/bodoni-moda.woff2") format("woff2"); }
+      @font-face { font-family: "Jost"; font-weight: 300 600; font-display: swap; src: url("/fonts/jost.woff2") format("woff2"); }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100svh; display: grid; place-items: center; padding: 24px; background: #fbeef0; color: #34141d; font-family: "Jost", system-ui, sans-serif; text-align: center; }
+      main { max-width: 440px; }
+      .logo { width: 72px; height: 72px; border-radius: 20px; background: #6b1730; color: #fbeef0; display: grid; place-items: center; margin: 0 auto 28px; font: 600 30px "Bodoni Moda", Georgia, serif; }
+      h1 { font: 500 clamp(2rem, 8vw, 2.8rem)/1.05 "Bodoni Moda", Georgia, serif; color: #6b1730; margin: 0 0 14px; letter-spacing: -0.02em; }
+      h1 i { color: #b23a5b; }
+      p { margin: 0 0 28px; font-size: 1.1rem; line-height: 1.55; color: #6e4a54; }
+      button { font: 500 1rem "Jost", system-ui, sans-serif; background: #6b1730; color: #fbeef0; border: 0; border-radius: 999px; padding: 15px 30px; cursor: pointer; }
+      button:focus-visible { outline: 2px solid #b23a5b; outline-offset: 3px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="logo" aria-hidden="true">LD</div>
+      <h1>Vous êtes <i>hors connexion</i></h1>
+      <p>La boutique a besoin d'Internet pour s'afficher. Vérifiez votre connexion, puis réessayez.</p>
+      <button onclick="location.reload()">Réessayer</button>
+    </main>
+  </body>
+</html>

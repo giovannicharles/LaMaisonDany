@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    background-color: #fbeef0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #fbeef0;
+}
+::-webkit-scrollbar-thumb {
+  background: #ecc6cd;
+  border-radius: 999px;
+  border: 2px solid #fbeef0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b23a5b;
+}
+
+@theme {
+  --color-blush: #fbeef0;
+  --color-blush-deep: #f6dde1;
+  --color-blush-edge: #ecc6cd;
+  --color-rose: #b23a5b;
+  --color-wine: #6b1730;
+  --color-wine-deep: #4a0f22;
+  --color-ink: #34141d;
+  --color-ink-soft: #6e4a54;
+
+  --font-brand: "Bodoni Moda", "Didot", Georgia, serif;
+  --font-text: "Jost", system-ui, sans-serif;
+}
+
+.lmd {
+  background-color: var(--color-blush);
+  color: var(--color-ink);
+  font-family: var(--font-text);
+  font-weight: 400;
+}
+.lmd ::selection {
+  background-color: var(--color-wine);
+  color: var(--color-blush);
+}
+.lmd h1,
+.lmd h2,
+.lmd h3 {
+  font-family: var(--font-brand);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.lmd :focus-visible {
+  outline: 2px solid var(--color-rose);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.lmd input,
+.lmd textarea {
+  caret-color: var(--color-rose);
+}
+
+.lmd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border-radius: 9999px;
+  padding: 0.95rem 1.9rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s, box-shadow 0.4s, color 0.3s;
+}
+.lmd-btn:active {
+  transform: scale(0.97);
+}
+.lmd-btn-wine {
+  background: var(--color-wine);
+  color: var(--color-blush);
+  box-shadow: 0 10px 24px -10px rgba(107, 23, 48, 0.55);
+}
+.lmd-btn-wine:hover {
+  background: var(--color-wine-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 28px -12px rgba(107, 23, 48, 0.6);
+}
+.lmd-btn-ghost {
+  border: 1.5px solid var(--color-wine);
+  color: var(--color-wine);
+}
+.lmd-btn-ghost:hover {
+  background: var(--color-wine);
+  color: var(--color-blush);
+}
+
+.lmd-field {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1.5px solid var(--color-blush-edge);
+  background: #fff9fa;
+  padding: 0.9rem 1.1rem;
+  color: var(--color-ink);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.lmd-field::placeholder {
+  color: #a5808a;
+}
+.lmd-field:hover {
+  border-color: var(--color-rose);
+}
+.lmd-field:focus {
+  outline: none;
+  border-color: var(--color-wine);
+  box-shadow: 0 0 0 4px rgba(178, 58, 91, 0.15);
+}
+
+@keyframes lmd-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes lmd-float {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50% { transform: translateY(-14px) rotate(1deg); }
+}
+@keyframes lmd-drift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.lmd-rise { animation: lmd-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.lmd-float { animation: lmd-float 7s ease-in-out infinite; }
+.lmd-drift { animation: lmd-drift 38s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lmd-rise, .lmd-float, .lmd-drift { animation: none; }
+  html { scroll-behavior: auto; }
+}

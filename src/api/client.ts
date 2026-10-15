@@ -10,6 +10,7 @@ import type {
 } from "@/types";
 
 import { formatPrice } from "@/lib/utils";
+import { MOCK_CATEGORIES, MOCK_PRODUCTS, MOCK_SETTINGS } from "@/data/mock";
 
 const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:4000/api" : "/api");
 let whatsappNumber: string = import.meta.env.VITE_WHATSAPP_NUMBER || "";
@@ -59,6 +60,71 @@ function readError(error: unknown): string {
   return "";
 }
 
+export class ApiError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
+
+/**
+ * Source des données du site public :
+ *  - auto (défaut) : l'API, avec repli sur les données intégrées si elle ne répond pas ou est vide ;
+ *  - api : l'API uniquement ;
+ *  - mock : uniquement les données intégrées (src/data/mock.ts).
+ * L'administration (/admin) utilise toujours l'API.
+ */
+const DATA_SOURCE = (import.meta.env.VITE_DATA_SOURCE as string | undefined) ?? "auto";
+const API_TIMEOUT_MS = 7000;
+let apiDownUntil = 0;
+let apiEmpty = false;
+
+const inAdmin = () => typeof window !== "undefined" && window.location.pathname.startsWith("/admin");
+
+function timeoutSignal(ms: number): AbortSignal {
+  const controller = new AbortController();
+  setTimeout(() => controller.abort(), ms);
+  return controller.signal;
+}
+
+async function publicRead<T>(live: (signal: AbortSignal) => Promise<ApiResponse<T>>, mock: () => T, isEmpty?: (data: T) => boolean): Promise<ApiResponse<T>> {
+  if (DATA_SOURCE === "api" || inAdmin()) return live(timeoutSignal(60000));
+  if (DATA_SOURCE === "mock" || Date.now() < apiDownUntil) return { data: mock() };
+  try {
+    const res = await live(timeoutSignal(API_TIMEOUT_MS));
+    if (isEmpty && isEmpty(res.data)) {
+      apiEmpty = true;
+      return { data: mock() };
+    }
+    return res;
+  } catch (err) {
+    if (err instanceof ApiError && err.status > 0 && err.status < 500) throw err;
+    apiDownUntil = Date.now() + 2 * 60 * 1000;
+    return { data: mock() };
+  }
+}
+
+const CATEGORY_ORDER = ["parfums-femme", "parfums-homme", "soins-du-corps", "deodorants", "vins", "maison"];
+const mockCategories = () =>
+  [...MOCK_CATEGORIES].sort((a, b) => {
+    const ia = CATEGORY_ORDER.indexOf(a.slug);
+    const ib = CATEGORY_ORDER.indexOf(b.slug);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  });
+
+function mockProducts(params: Record<string, string>): Product[] {
+  const norm = (t: string) => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  let list = [...MOCK_PRODUCTS];
+  if (params.category) list = list.filter((p) => p.category_slug === params.category);
+  if (params.featured === "true") list = list.filter((p) => p.featured);
+  if (params.search) {
+    const q = norm(params.search);
+    list = list.filter((p) => norm(`${p.name} ${p.description ?? ""}`).includes(q));
+  }
+  return list.sort((a, b) => a.sort_order - b.sort_order);
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_URL}${path}`;
   const headers: Record<string, string> = { ...(options.headers as Record<string, string>) };
@@ -76,7 +142,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: "Request failed" }));
-    throw new Error(readError(body.error) || `HTTP ${res.status}`);
+    throw new ApiError(readError(body.error) || `HTTP ${res.status}`, res.status);
   }
 
   return res.json() as Promise<T>;
@@ -110,16 +176,34 @@ export const api = {
   products: {
     list: (params: Record<string, string> = {}) => {
       const qs = new URLSearchParams(params).toString();
-      return api.get<Product[]>(`/products${qs ? `?${qs}` : ""}`);
+      const unfiltered = Object.keys(params).length === 0;
+      return publicRead<Product[]>(
+        (signal) => request<ApiResponse<Product[]>>(`/products${qs ? `?${qs}` : ""}`, { signal }),
+        () => mockProducts(params),
+        (data) => (unfiltered || apiEmpty) && data.length === 0
+      );
     },
-    get: (slug: string) => api.get<Product>(`/products/${slug}`),
+    get: (slug: string) =>
+      publicRead<Product>(
+        (signal) => request<ApiResponse<Product>>(`/products/${slug}`, { signal }),
+        () => {
+          const found = MOCK_PRODUCTS.find((p) => p.slug === slug);
+          if (!found) throw new ApiError("Product not found", 404);
+          return found;
+        }
+      ),
     create: (data: Partial<Product>) => api.post<Product>("/products", data),
     update: (id: number, data: Partial<Product>) => api.put<Product>(`/products/${id}`, data),
     delete: (id: number) => api.delete<{ deleted: boolean }>(`/products/${id}`),
     reorder: (ids: number[]) => api.put<{ reordered: number }>("/products/reorder", { ids }),
   },
   categories: {
-    list: () => api.get<Category[]>("/categories"),
+    list: () =>
+      publicRead<Category[]>(
+        (signal) => request<ApiResponse<Category[]>>("/categories", { signal }),
+        mockCategories,
+        (data) => data.length === 0 || apiEmpty
+      ),
     create: (data: { name: string }) => api.post<Category>("/categories", data),
     update: (id: number, data: { name: string }) => api.put<Category>(`/categories/${id}`, data),
     reorder: (ids: number[]) => api.put<{ reordered: number }>("/categories/reorder", { ids }),
@@ -127,7 +211,13 @@ export const api = {
   },
   pages: {
     list: () => api.get<Page[]>("/pages"),
-    get: (slug: string) => api.get<Page>(`/pages/${slug}`),
+    get: (slug: string) =>
+      publicRead<Page>(
+        (signal) => request<ApiResponse<Page>>(`/pages/${slug}`, { signal }),
+        () => {
+          throw new ApiError("Page not found", 404);
+        }
+      ),
     upsert: (data: { slug: string; title: string; content?: string }) =>
       api.post<Page>("/pages", data),
     delete: (id: number) => api.delete<{ deleted: boolean }>(`/pages/${id}`),
@@ -147,6 +237,11 @@ export const api = {
     delete: (id: number) => api.delete<{ deleted: boolean }>(`/messages/${id}`),
   },
   media: {
+    uploadVideo: (file: File) => {
+      const fd = new FormData();
+      fd.append("video", file);
+      return api.post<MediaResponse>("/media/upload-video", fd);
+    },
     upload: (file: File) => {
       const fd = new FormData();
       fd.append("image", file);
@@ -157,7 +252,18 @@ export const api = {
     get: (days = 30) => api.get<Stats>(`/events/stats?days=${days}`),
   },
   settings: {
-    get: () => api.get<Record<string, unknown>>("/settings"),
+    get: async () => {
+      const res = await publicRead<Record<string, unknown>>(
+        (signal) => request<ApiResponse<Record<string, unknown>>>("/settings", { signal }),
+        () => MOCK_SETTINGS
+      );
+      if (inAdmin()) return res;
+      const general = (res.data.general ?? {}) as Record<string, unknown>;
+      const cleaned = Object.fromEntries(Object.entries(general).filter(([, v]) => v !== "" && v != null));
+      return {
+        data: { ...MOCK_SETTINGS, ...res.data, general: { ...(MOCK_SETTINGS.general as object), ...cleaned } },
+      };
+    },
     update: (data: Record<string, unknown>) => api.put<Record<string, unknown>>("/settings", data),
   },
   auth: {

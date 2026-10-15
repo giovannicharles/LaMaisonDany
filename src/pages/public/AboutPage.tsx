@@ -9,10 +9,13 @@ import Seo from "@/components/public/Seo";
 import Rich from "@/components/public/Rich";
 import Faq from "@/components/public/Faq";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
+import { optimizeImage } from "@/lib/images";
+import { pickPhotos, useShowcase } from "@/lib/showcase";
 import { CreamJar, PerfumeBottle, WineBottle } from "@/components/art/Bottles";
 
 export default function AboutPage() {
   const site = useSite();
+  const photos = pickPhotos(useShowcase(), 6);
   const [page, setPage] = useState<Page | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,15 +34,31 @@ export default function AboutPage() {
       <section className="max-w-[1320px] mx-auto px-5 md:px-10 py-20 md:py-28 grid lg:grid-cols-2 gap-14 lg:gap-24 items-center">
         <ScrollReveal>
           <div className="relative mx-auto max-w-[500px] aspect-square">
-            <div className="absolute left-0 top-0 h-[80%] w-[60%] rounded-t-[999px] rounded-b-[1.75rem] bg-blush-edge flex items-end justify-center pb-6">
-              <PerfumeBottle className="h-[82%]" label="D" />
-            </div>
-            <div className="absolute right-0 top-[8%] h-[46%] w-[40%] rounded-[1.75rem] bg-wine flex items-end justify-center pb-3">
-              <WineBottle className="h-[88%]" />
-            </div>
-            <div className="absolute bottom-0 right-[4%] h-[36%] w-[64%] rounded-[1.75rem] bg-blush-deep flex items-center justify-center">
-              <CreamJar className="w-[72%]" />
-            </div>
+            {photos.length >= 6 ? (
+              <>
+                <div className="absolute left-0 top-0 h-[78%] w-[58%] overflow-hidden rounded-t-[999px] rounded-b-[1.75rem] bg-blush-edge shadow-[0_30px_50px_-30px_rgba(107,23,48,0.55)]">
+                  <img src={optimizeImage(photos[3], 700)} alt="" loading="lazy" className="h-full w-full object-cover" />
+                </div>
+                <div className="absolute right-0 top-[6%] h-[40%] w-[40%] overflow-hidden rounded-[1.75rem] bg-blush-edge shadow-[0_30px_50px_-30px_rgba(107,23,48,0.55)] ring-4 ring-blush">
+                  <img src={optimizeImage(photos[4], 500)} alt="" loading="lazy" className="h-full w-full object-cover" />
+                </div>
+                <div className="absolute bottom-0 right-[3%] h-[42%] w-[62%] overflow-hidden rounded-[1.75rem] bg-blush-edge shadow-[0_30px_50px_-30px_rgba(107,23,48,0.55)] ring-4 ring-blush">
+                  <img src={optimizeImage(photos[5], 600)} alt="" loading="lazy" className="h-full w-full object-cover" />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="absolute left-0 top-0 h-[80%] w-[60%] rounded-t-[999px] rounded-b-[1.75rem] bg-blush-edge flex items-end justify-center pb-6">
+                  <PerfumeBottle className="h-[82%]" label="D" />
+                </div>
+                <div className="absolute right-0 top-[8%] h-[46%] w-[40%] rounded-[1.75rem] bg-wine flex items-end justify-center pb-3">
+                  <WineBottle className="h-[88%]" />
+                </div>
+                <div className="absolute bottom-0 right-[4%] h-[36%] w-[64%] rounded-[1.75rem] bg-blush-deep flex items-center justify-center">
+                  <CreamJar className="w-[72%]" />
+                </div>
+              </>
+            )}
           </div>
         </ScrollReveal>
 

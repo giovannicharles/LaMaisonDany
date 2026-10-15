@@ -61,3 +61,14 @@ Dans Netlify > **Domain management**, ajoutez votre domaine et créez les enregi
 | `VITE_WHATSAPP_NUMBER`, `VITE_WHATSAPP_DEFAULT_MESSAGE` | Valeurs de secours seulement : tout se règle dans l'admin. |
 
 Le numéro WhatsApp, les textes, les produits et le référencement se gèrent dans l'admin (`/admin`), pas dans ces fichiers.
+
+## Aperçu WhatsApp par produit (à activer quand l'API fonctionne)
+
+Pour que chaque lien produit partagé sur WhatsApp affiche sa propre photo et son nom, ajoutez ces règles **avant** la règle  dans  (rubrique ) :
+
+\
+Ne les ajoutez qu'une fois que  répond correctement : tant que l'API est en erreur, ces pages le seraient aussi.
+
+## Données du site en attendant l'API
+
+Le site contient les vrais produits dans  et leurs photos dans . Il les utilise automatiquement quand l'API ne répond pas ou n'a pas encore de produits. Variable facultative  :  (par défaut),  (API seulement) ou  (données intégrées seulement).

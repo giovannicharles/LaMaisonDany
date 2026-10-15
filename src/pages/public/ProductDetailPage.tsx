@@ -135,7 +135,7 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className={`${shell} pt-[104px] pb-24`}>
+      <div className={`${shell} pt-[140px] pb-24`}>
         <div className="grid md:grid-cols-2 gap-10 md:gap-20 animate-pulse">
           <div className="aspect-[4/5] rounded-[2rem] bg-blush-deep" />
           <div className="space-y-4 pt-10">
@@ -151,7 +151,7 @@ export default function ProductDetailPage() {
 
   if (error || !product) {
     return (
-      <div className={`${shell} pt-[104px] pb-24 text-center`}>
+      <div className={`${shell} pt-[140px] pb-24 text-center`}>
         <Seo title="Produit introuvable" noindex />
         <p className="font-brand text-3xl text-wine">Ce produit est introuvable.</p>
         <Link to="/catalogue" className="lmd-btn lmd-btn-ghost mt-8">
@@ -174,7 +174,7 @@ export default function ProductDetailPage() {
         type="product"
         jsonLd={productLd(product, site, window.location.origin)}
       />
-      <div className={`${shell} pt-[104px] pb-28 md:pb-28`}>
+      <div className={`${shell} pt-[140px] pb-28 md:pb-28`}>
         <nav aria-label="Fil d'Ariane" className="mb-8 flex flex-wrap items-center gap-1.5 text-[0.95rem] text-ink-soft">
           <Link to="/" className="hover:text-wine transition-colors">Accueil</Link>
           <ChevronRight className="h-4 w-4" />

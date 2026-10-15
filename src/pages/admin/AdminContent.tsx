@@ -16,6 +16,7 @@ const TABS: { id: string; label: string; keys: SectionKey[] }[] = [
   { id: "order", label: "Commande", keys: ["how_to_order", "order_dialog"] },
   { id: "faq", label: "FAQ", keys: ["faq"] },
   { id: "about", label: "Valeurs", keys: ["values"] },
+  { id: "videos", label: "Vidéos", keys: ["videos"] },
   { id: "chatbot", label: "Chatbot", keys: ["chatbot"] },
 ];
 
@@ -78,6 +79,54 @@ function ListEditor<T>({
         </AButton>
       )}
     </div>
+  );
+}
+
+function VideoFields({
+  item,
+  update,
+}: {
+  item: { title: string; src: string; poster: string; product_slug: string };
+  update: (patch: Partial<{ title: string; src: string; poster: string; product_slug: string }>) => void;
+}) {
+  const { toast } = useFeedback();
+  const [busy, setBusy] = useState<"video" | "poster" | null>(null);
+  const videoRef = useRef<HTMLInputElement>(null);
+  const posterRef = useRef<HTMLInputElement>(null);
+
+  const send = async (file: File | undefined, kind: "video" | "poster") => {
+    if (!file) return;
+    const limit = kind === "video" ? 80 : 8;
+    if (file.size > limit * 1024 * 1024) return toast("error", `Fichier trop lourd (${limit} Mo maximum).`);
+    setBusy(kind);
+    try {
+      const res = kind === "video" ? await api.media.uploadVideo(file) : await api.media.upload(file);
+      update(kind === "video" ? { src: res.data.url } : { poster: res.data.url });
+      toast("success", kind === "video" ? "Vidéo envoyée. Pensez à enregistrer." : "Image envoyée. Pensez à enregistrer.");
+    } catch (err) {
+      toast("error", err instanceof Error && err.message ? err.message : "L'envoi a échoué.");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <>
+      <TextInput aria-label="Titre de la vidéo" placeholder="Titre affiché sur la vidéo" value={item.title} onChange={(e) => update({ title: e.target.value })} />
+      <div className="flex flex-wrap items-center gap-3">
+        <AButton type="button" variant="secondary" disabled={busy !== null} onClick={() => videoRef.current?.click()}>
+          {busy === "video" ? "Envoi en cours..." : item.src ? "Remplacer la vidéo" : "Envoyer la vidéo (MP4, WebM)"}
+        </AButton>
+        <AButton type="button" variant="ghost" disabled={busy !== null} onClick={() => posterRef.current?.click()}>
+          {busy === "poster" ? "Envoi..." : item.poster ? "Changer l'image d'aperçu" : "Image d'aperçu (facultatif)"}
+        </AButton>
+        <input ref={videoRef} type="file" accept="video/mp4,video/webm,video/quicktime" className="hidden" onChange={(e) => send(e.target.files?.[0], "video")} />
+        <input ref={posterRef} type="file" accept="image/*" className="hidden" onChange={(e) => send(e.target.files?.[0], "poster")} />
+      </div>
+      <TextInput aria-label="Adresse de la vidéo" placeholder="ou collez l'adresse d'une vidéo (https://...)" value={item.src} onChange={(e) => update({ src: e.target.value })} />
+      {item.src && <video src={item.src} poster={item.poster || undefined} controls preload="metadata" className="max-h-56 rounded-xl bg-black" />}
+      <TextInput aria-label="Produit lié" placeholder="Produit lié (facultatif) : identifiant du produit, ex. jp-chenet-ice-edition" value={item.product_slug} onChange={(e) => update({ product_slug: e.target.value })} />
+    </>
   );
 }
 
@@ -439,6 +488,22 @@ export default function AdminContent() {
                     <TextArea aria-label="Description" rows={2} placeholder="Description" value={item.desc} onChange={(e) => update({ desc: e.target.value })} />
                   </>
                 )}
+              />
+            </>
+          )}
+
+          {tab === "videos" && (
+            <>
+              <p className="text-ink-soft">
+                Les vidéos s'affichent sur l'accueil, dans la section « Nos produits en vidéo » (jusqu'à 12). Format vertical recommandé (9:16), 80 Mo maximum chacune. Sans vidéo, la section n'apparaît pas.
+              </p>
+              <ListEditor
+                items={content.videos}
+                onChange={(v) => setList("videos", v)}
+                blank={{ title: "", src: "", poster: "", product_slug: "" }}
+                addLabel="Ajouter une vidéo"
+                max={12}
+                render={(item, update) => <VideoFields item={item} update={update} />}
               />
             </>
           )}

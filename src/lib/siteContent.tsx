@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { api, configureWhatsApp, DEFAULT_PRODUCT_TEMPLATE } from "@/api/client";
 import { setCurrency } from "@/lib/utils";
+import { LOCAL_VIDEOS, type SiteVideo } from "@/data/videos";
 
 export interface ChatReply {
   label: string;
@@ -36,6 +37,7 @@ export interface SiteContent {
     opening_hours: string;
   };
   texts: Record<string, string>;
+  videos: SiteVideo[];
   seo: { title: string; description: string; og_image_url: string };
   hero: {
     line1: string;
@@ -74,7 +76,12 @@ export interface TextField {
 }
 
 export const TEXT_FIELDS: TextField[] = [
+  { key: "topbar_text", group: "Barre du haut", label: "Message de la barre du haut", hint: "Laissez vide pour masquer la barre.", value: "Prix, disponibilité, commande : sur WhatsApp." },
+  { key: "topbar_link", group: "Barre du haut", label: "Lien à la suite du message", hint: "Ouvre WhatsApp. Laissez vide pour ne pas l'afficher.", value: "Écrire →" },
   { key: "loader_tagline", group: "Écran de chargement", label: "Phrase sous le nom", value: "Parfums, cosmétiques, vins & plus" },
+  { key: "brands_list", group: "Accueil", label: "Marques affichées en défilement", hint: "Séparées par des virgules. Laissez vide pour masquer la bande.", long: true, value: "J.P. Chenet, Jean Paul Gaultier, Mauboussin, Diana Castel, Jacques Saint Pres, Mixa, Le Petit Marseillais, Cadum, Yves Rocher, Byphasse, Lacura, Femfresh, Brut, Carré Homme" },
+  { key: "videos_title", group: "Accueil", label: "Titre de la section vidéos", value: "Nos produits *en vidéo*" },
+  { key: "videos_text", group: "Accueil", label: "Texte de la section vidéos", long: true, value: "Découvrez nos produits de plus près, puis écrivez-nous sur WhatsApp." },
   { key: "home_categories_title", group: "Accueil", label: "Titre des catégories", value: "Choisissez votre *univers*" },
   { key: "home_featured_title", group: "Accueil", label: "Titre des coups de cœur", value: "Nos coups de *cœur*" },
   { key: "home_featured_button", group: "Accueil", label: "Bouton vers la boutique", value: "Toute la boutique" },
@@ -105,6 +112,7 @@ export const DEFAULT_TEXTS: Record<string, string> = Object.fromEntries(TEXT_FIE
 
 export const DEFAULT_CONTENT: SiteContent = {
   texts: DEFAULT_TEXTS,
+  videos: LOCAL_VIDEOS,
   general: {
     brand: "LaMaison Dany",
     currency: "FCFA",

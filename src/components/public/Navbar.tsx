@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link, NavLink } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Clock, Menu, Phone, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { whatsappLink } from "@/api/client";
@@ -15,7 +15,12 @@ const links = [
 ];
 
 export default function Navbar() {
-  const { general } = useSite();
+  const { general, texts } = useSite();
+  const socials = [
+    { label: "Instagram", href: general.instagram },
+    { label: "Facebook", href: general.facebook },
+    { label: "TikTok", href: general.tiktok },
+  ].filter((x) => x.href);
   const brandWords = general.brand.trim().split(" ");
   const brandLast = brandWords.length > 1 ? brandWords.pop() : "";
   const [open, setOpen] = useState(false);
@@ -41,6 +46,46 @@ export default function Navbar() {
           : "bg-transparent"
       )}
     >
+      {texts.topbar_text.trim() && (
+        <div
+          className={cn(
+            "overflow-hidden bg-wine text-blush transition-[max-height,opacity] duration-300",
+            scrolled || open ? "max-h-0 opacity-0" : "max-h-10 opacity-100"
+          )}
+        >
+          <div className="mx-auto grid h-9 max-w-[1320px] items-center gap-4 px-5 text-[0.78rem] md:grid-cols-[1fr_auto_1fr] md:px-10 md:text-[0.82rem]">
+            <div className="hidden items-center gap-5 md:flex">
+              {general.phone && (
+                <a href={`tel:${general.phone.replace(/\s/g, "")}`} className="flex items-center gap-1.5 transition-colors hover:text-white">
+                  <Phone className="h-3.5 w-3.5" /> {general.phone}
+                </a>
+              )}
+              {general.opening_hours && (
+                <span className="flex items-center gap-1.5 text-blush/80">
+                  <Clock className="h-3.5 w-3.5" /> {general.opening_hours}
+                </span>
+              )}
+            </div>
+            <p className="truncate text-center">
+              {texts.topbar_text}{" "}
+              {texts.topbar_link.trim() && (
+                <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="font-medium underline underline-offset-2 transition-colors hover:text-white">
+                  {texts.topbar_link}
+                </a>
+              )}
+            </p>
+            <ul className="hidden items-center justify-end gap-4 md:flex">
+              {socials.map((x) => (
+                <li key={x.label}>
+                  <a href={x.href} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">
+                    {x.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
       <nav className="max-w-[1320px] mx-auto px-5 md:px-10 h-[72px] flex items-center justify-between">
         <Link to="/" onClick={() => setOpen(false)} className="font-brand text-[1.45rem] leading-none text-wine">
           {brandWords.join(" ")} {brandLast && <span className="italic text-rose">{brandLast}</span>}

@@ -56,7 +56,7 @@ export default function Navbar() {
           <div className="mx-auto grid h-9 max-w-[1320px] items-center gap-4 px-5 text-[0.78rem] md:grid-cols-[1fr_auto_1fr] md:px-10 md:text-[0.82rem]">
             <div className="hidden items-center gap-5 md:flex">
               {general.phone && (
-                <a href={`tel:${general.phone.replace(/\s/g, "")}`} className="flex items-center gap-1.5 transition-colors hover:text-white">
+                <a href={`tel:${general.phone.replace(/\s/g, "")}`} className="flex min-h-9 items-center gap-1.5 transition-colors hover:text-white">
                   <Phone className="h-3.5 w-3.5" /> {general.phone}
                 </a>
               )}
@@ -69,7 +69,7 @@ export default function Navbar() {
             <p className="truncate text-center">
               {texts.topbar_text}{" "}
               {texts.topbar_link.trim() && (
-                <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="font-medium underline underline-offset-2 transition-colors hover:text-white">
+                <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-9 items-center font-medium underline underline-offset-2 transition-colors hover:text-white">
                   {texts.topbar_link}
                 </a>
               )}
@@ -99,7 +99,7 @@ export default function Navbar() {
                 end={l.end}
                 className={({ isActive }) =>
                   cn(
-                    "relative text-[0.95rem] font-medium transition-colors pb-1 block",
+                    "relative block py-2.5 text-[0.95rem] font-medium transition-colors",
                     isActive ? "text-wine" : "text-ink-soft hover:text-wine"
                   )
                 }
@@ -110,7 +110,7 @@ export default function Navbar() {
                     {isActive && (
                       <motion.span
                         layoutId="nav-underline"
-                        className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-rose"
+                        className="absolute inset-x-0 bottom-1.5 h-0.5 rounded-full bg-rose"
                         transition={{ type: "spring", stiffness: 380, damping: 32 }}
                       />
                     )}

@@ -61,10 +61,10 @@ export default function Footer() {
           <div>
             <h3 className="!font-text !text-sm !font-medium text-blush-edge mb-5">{texts.footer_nav_title}</h3>
             <ul className="space-y-3 text-[0.95rem]">
-              <li><Link to="/" className="hover:text-white transition-colors">{texts.nav_home}</Link></li>
-              <li><Link to="/catalogue" className="hover:text-white transition-colors">{texts.nav_shop}</Link></li>
-              <li><Link to="/a-propos" className="hover:text-white transition-colors">{texts.nav_about}</Link></li>
-              <li><Link to="/contact" className="hover:text-white transition-colors">{texts.nav_contact}</Link></li>
+              <li><Link to="/" className="inline-block py-1.5 hover:text-white transition-colors">{texts.nav_home}</Link></li>
+              <li><Link to="/catalogue" className="inline-block py-1.5 hover:text-white transition-colors">{texts.nav_shop}</Link></li>
+              <li><Link to="/a-propos" className="inline-block py-1.5 hover:text-white transition-colors">{texts.nav_about}</Link></li>
+              <li><Link to="/contact" className="inline-block py-1.5 hover:text-white transition-colors">{texts.nav_contact}</Link></li>
             </ul>
           </div>
 
@@ -75,7 +75,7 @@ export default function Footer() {
                 {infos.map(({ icon: Icon, text, href }) => (
                   <li key={text} className="flex items-start gap-3">
                     <Icon className="mt-0.5 h-4 w-4 shrink-0 text-blush-edge" />
-                    {href ? <a href={href} className="hover:text-white transition-colors">{text}</a> : <span>{text}</span>}
+                    {href ? <a href={href} className="inline-block py-1.5 hover:text-white transition-colors">{text}</a> : <span>{text}</span>}
                   </li>
                 ))}
               </ul>

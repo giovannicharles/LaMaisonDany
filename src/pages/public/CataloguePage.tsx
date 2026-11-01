@@ -220,7 +220,7 @@ export default function CataloguePage() {
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ duration: 0.6, delay: (i % 4) * 0.06, ease: EASE }}
                 >
-                  <ProductCard product={p} />
+                  <ProductCard product={p} headingAs="h2" />
                 </motion.li>
               ))}
             </AnimatePresence>

@@ -179,9 +179,9 @@ export default function ProductDetailPage() {
       />
       <div className={`${shell} pt-[140px] pb-28 md:pb-28`}>
         <nav aria-label="Fil d'Ariane" className="mb-8 flex flex-wrap items-center gap-1.5 text-[0.95rem] text-ink-soft">
-          <Link to="/" className="hover:text-wine transition-colors">Accueil</Link>
+          <Link to="/" className="inline-flex min-h-10 items-center hover:text-wine transition-colors">{site.texts.nav_home}</Link>
           <ChevronRight className="h-4 w-4" />
-          <Link to="/catalogue" className="hover:text-wine transition-colors">Boutique</Link>
+          <Link to="/catalogue" className="inline-flex min-h-10 items-center hover:text-wine transition-colors">{site.texts.nav_shop}</Link>
           {product.category_name && (
             <>
               <ChevronRight className="h-4 w-4" />

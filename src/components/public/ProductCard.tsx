@@ -9,7 +9,7 @@ import { useSite } from "@/lib/siteContent";
 import { ProductArt, artKindFor } from "@/components/art/Bottles";
 import WhatsAppIcon from "./WhatsAppIcon";
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, headingAs: Heading = "h3" }: { product: Product; headingAs?: "h2" | "h3" }) {
   const { texts } = useSite();
   const unavailable = product.available === false;
   const hasPrice = product.price != null;
@@ -64,14 +64,14 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
 
       <div className="flex flex-1 flex-col p-4 md:p-5">
-        <h3 className="font-brand text-[1.15rem] leading-snug text-wine line-clamp-2 min-h-[2.9rem]">
+        <Heading className="font-brand text-[1.15rem] leading-snug text-wine line-clamp-2 min-h-[2.9rem]">
           <Link
             to={`/produit/${product.slug}`}
             className="outline-none after:absolute after:inset-0 after:z-0 after:content-['']"
           >
             {product.name}
           </Link>
-        </h3>
+        </Heading>
 
         <p className={`mt-2 ${hasPrice ? "text-lg font-semibold text-wine" : "text-[0.95rem] italic text-ink-soft"}`}>
           {formatPrice(product.price)}

@@ -82,8 +82,8 @@ export default function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
   };
 
   return (
-    <main className="lmd grid min-h-screen bg-blush lg:grid-cols-2">
-      <div className="relative hidden items-end justify-center overflow-hidden bg-gradient-to-br from-wine to-wine-deep lg:flex">
+    <main className="lmd grid min-h-screen bg-blush md:grid-cols-2">
+      <div className="relative hidden items-end justify-center overflow-hidden bg-gradient-to-br from-wine to-wine-deep md:flex">
         <div aria-hidden className="relative h-[70%] w-[80%]">
           <WineBottle className="absolute bottom-0 left-[6%] h-[78%] -rotate-6 opacity-95" label="D" />
           <PerfumeBottle className="absolute bottom-0 left-1/2 h-[92%] -translate-x-1/2" />
@@ -96,10 +96,10 @@ export default function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
 
       <div className="flex items-center justify-center px-6 py-12">
         <form onSubmit={handleSubmit} className="w-full max-w-sm">
-          <p className="font-brand text-3xl text-wine lg:hidden">
+          <p className="font-brand text-3xl text-wine md:hidden">
             LaMaison <span className="italic text-rose">Dany</span>
           </p>
-          <h1 className="mt-6 font-brand text-4xl text-wine lg:mt-0">Administration</h1>
+          <h1 className="mt-6 font-brand text-4xl text-wine md:mt-0">Administration</h1>
           <p className="mt-2 text-ink-soft">Connectez-vous pour gérer votre boutique.</p>
 
           <div className="mt-8 space-y-5">

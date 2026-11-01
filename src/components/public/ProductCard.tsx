@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { Product } from "@/types";
 import { whatsappProductLink } from "@/api/client";
@@ -13,17 +14,21 @@ export default function ProductCard({ product }: { product: Product }) {
   const unavailable = product.available === false;
   const hasPrice = product.price != null;
   const hover = product.images?.[0];
+  const [loaded, setLoaded] = useState(false);
 
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] bg-white shadow-[0_1px_0_rgba(107,23,48,0.04),0_18px_36px_-30px_rgba(107,23,48,0.6)] ring-1 ring-blush-edge/60 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_50px_-30px_rgba(107,23,48,0.55)] focus-within:ring-2 focus-within:ring-rose">
-      <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-b from-blush-deep to-blush-edge/60">
+      <div className={`relative aspect-[4/5] overflow-hidden bg-gradient-to-b from-blush-deep to-blush-edge/60 ${product.image_url && !loaded ? "lmd-shimmer" : ""}`}>
         {product.image_url ? (
           <>
             <img
               src={optimizeImage(product.image_url, 600)}
               alt={product.name}
               loading="lazy"
-              className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.04] ${hover ? "group-hover:opacity-0" : ""}`}
+              ref={(el) => { if (el?.complete && el.naturalWidth > 0 && !loaded) setLoaded(true); }}
+              onLoad={() => setLoaded(true)}
+              onError={() => setLoaded(true)}
+              className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.04] ${loaded ? "" : "opacity-0"} ${hover ? "group-hover:opacity-0" : ""}`}
             />
             {hover && (
               <img

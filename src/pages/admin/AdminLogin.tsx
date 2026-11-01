@@ -1,13 +1,63 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "@/api/client";
 import { AButton, Field, TextInput } from "@/components/admin/kit";
 import { PerfumeBottle, WineBottle, CreamJar } from "@/components/art/Bottles";
+
+interface GoogleId {
+  initialize: (o: { client_id: string; callback: (r: { credential: string }) => void }) => void;
+  renderButton: (el: HTMLElement, o: Record<string, unknown>) => void;
+}
+
+function loadGoogle(): Promise<GoogleId | null> {
+  const w = window as unknown as { google?: { accounts?: { id?: GoogleId } } };
+  if (w.google?.accounts?.id) return Promise.resolve(w.google.accounts.id);
+  return new Promise((resolve) => {
+    const s = document.createElement("script");
+    s.src = "https://accounts.google.com/gsi/client";
+    s.async = true;
+    s.onload = () => resolve(w.google?.accounts?.id ?? null);
+    s.onerror = () => resolve(null);
+    document.head.appendChild(s);
+  });
+}
 
 export default function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleId, setGoogleId] = useState("");
+  const googleRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    api.auth.config().then((r) => setGoogleId(r.data.google_client_id || "")).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!googleId) return;
+    let alive = true;
+    loadGoogle().then((g) => {
+      if (!alive || !g || !googleRef.current) return;
+      g.initialize({
+        client_id: googleId,
+        callback: async ({ credential }) => {
+          setError("");
+          try {
+            const res = await api.auth.google(credential);
+            localStorage.setItem("lmd_token", res.data.token);
+            onSuccess();
+          } catch (err) {
+            const text = err instanceof Error ? err.message : "";
+            setError(/autorise/i.test(text) ? "Ce compte Google n'a pas accès à l'administration." : "Connexion Google impossible pour le moment.");
+          }
+        },
+      });
+      g.renderButton(googleRef.current, { theme: "outline", size: "large", shape: "pill", text: "continue_with", locale: "fr", width: 320 });
+    });
+    return () => {
+      alive = false;
+    };
+  }, [googleId, onSuccess]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,11 +103,10 @@ export default function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
           <p className="mt-2 text-ink-soft">Connectez-vous pour gérer votre boutique.</p>
 
           <div className="mt-8 space-y-5">
-            <Field label="Numéro de téléphone" htmlFor="l-phone" hint="Avec l'indicatif du pays, par exemple 237 690 00 00 00.">
+            <Field label="Téléphone ou email" htmlFor="l-phone" hint="Téléphone avec l'indicatif du pays, par exemple 237 690 00 00 00.">
               <TextInput
                 id="l-phone"
-                type="tel"
-                inputMode="tel"
+                type="text"
                 autoComplete="username"
                 placeholder="237 690 00 00 00"
                 value={identifier}
@@ -79,6 +128,13 @@ export default function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
           <AButton type="submit" disabled={loading} className="mt-7 w-full !py-3.5">
             {loading ? "Connexion..." : "Se connecter"}
           </AButton>
+
+          {googleId && (
+            <div className="mt-6">
+              <p className="mb-4 flex items-center gap-3 text-sm text-ink-soft before:h-px before:flex-1 before:bg-blush-edge after:h-px after:flex-1 after:bg-blush-edge">ou</p>
+              <div ref={googleRef} className="flex justify-center" />
+            </div>
+          )}
         </form>
       </div>
     </main>

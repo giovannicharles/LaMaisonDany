@@ -15,7 +15,7 @@ import WhatsAppIcon from "@/components/public/WhatsAppIcon";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
 import { EASE } from "@/lib/motion";
 import { optimizeImage } from "@/lib/images";
-import { pickPhotos, useShowcase } from "@/lib/showcase";
+import { pickPhotos, useShowcase, useShowcaseReady } from "@/lib/showcase";
 import { iconFor, useSite } from "@/lib/siteContent";
 import Seo from "@/components/public/Seo";
 import { richLines } from "@/components/public/Rich";
@@ -45,6 +45,7 @@ export default function HomePage() {
   const site = useSite();
   const o = site.options;
   const showcase = useShowcase();
+  const showcaseReady = useShowcaseReady();
   const [featured, setFeatured] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -112,7 +113,7 @@ export default function HomePage() {
               </Link>
             </motion.div>
 
-            {showcase.length > 0 && (
+            {showcaseReady && showcase.length > 0 && (
               <motion.dl {...fadeUp(1.15)} className="mt-10 flex gap-8 text-wine">
                 <div>
                   <dt className="sr-only">Produits</dt>

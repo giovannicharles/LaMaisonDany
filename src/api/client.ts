@@ -280,6 +280,9 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ identifier, password }),
       }),
+    config: () => request<ApiResponse<{ google_client_id: string }>>("/auth/config"),
+    google: (credential: string) =>
+      request<ApiResponse<AuthResponse>>("/auth/google", { method: "POST", body: JSON.stringify({ credential }) }),
     me: () => api.get<Admin>("/auth/me"),
     updateProfile: (data: { name?: string; phone?: string; email?: string }) => api.put<Admin>("/auth/me", data),
     changePassword: (data: { current_password: string; new_password: string }) =>

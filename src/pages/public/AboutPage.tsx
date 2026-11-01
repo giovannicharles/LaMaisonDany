@@ -8,6 +8,7 @@ import PageHeader from "@/components/public/PageHeader";
 import Seo from "@/components/public/Seo";
 import Rich from "@/components/public/Rich";
 import Faq from "@/components/public/Faq";
+import { Skeleton } from "@/components/public/Skeleton";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
 import { optimizeImage } from "@/lib/images";
 import { pickPhotos, useShowcase } from "@/lib/showcase";
@@ -70,10 +71,10 @@ export default function AboutPage() {
             <Rich text={site.texts.about_story_title} />
           </h2>
           {loading ? (
-            <div className="mt-6 space-y-3 animate-pulse">
-              <div className="h-4 w-full rounded-full bg-blush-deep" />
-              <div className="h-4 w-5/6 rounded-full bg-blush-deep" />
-              <div className="h-4 w-4/6 rounded-full bg-blush-deep" />
+            <div role="status" aria-label="Chargement" className="mt-6 space-y-3">
+              <Skeleton className="h-4 w-full rounded-full" />
+              <Skeleton className="h-4 w-5/6 rounded-full" />
+              <Skeleton className="h-4 w-4/6 rounded-full" />
             </div>
           ) : (
             <p className="mt-6 max-w-[56ch] whitespace-pre-line text-lg leading-relaxed text-ink-soft">

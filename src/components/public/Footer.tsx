@@ -103,9 +103,9 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 pt-6 border-t border-blush/15 flex flex-col sm:flex-row justify-between gap-2 text-sm text-blush/60">
-          <span>© {new Date().getFullYear()} {general.brand}</span>
-          <span>{general.tagline}</span>
+        <div className="mt-16 pt-6 pb-16 sm:pb-14 border-t border-blush/15 flex flex-col sm:flex-row justify-between gap-2 text-sm text-blush/60">
+          <span>© {new Date().getFullYear()} {general.brand} · {general.tagline}</span>
+          {texts.footer_credit.trim() && <span className="font-medium text-blush/80">{texts.footer_credit}</span>}
         </div>
       </div>
     </footer>

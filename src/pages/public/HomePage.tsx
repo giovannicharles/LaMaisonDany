@@ -12,6 +12,8 @@ import ProductCard from "@/components/public/ProductCard";
 import SplitLines from "@/components/public/SplitLines";
 import VideoReels from "@/components/public/VideoReels";
 import WhatsAppIcon from "@/components/public/WhatsAppIcon";
+import { ProductGridSkeleton } from "@/components/public/Skeleton";
+import CountUp from "@/components/public/CountUp";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
 import { EASE } from "@/lib/motion";
 import { optimizeImage } from "@/lib/images";
@@ -117,12 +119,12 @@ export default function HomePage() {
               <motion.dl {...fadeUp(1.15)} className="mt-10 flex gap-8 text-wine">
                 <div>
                   <dt className="sr-only">Produits</dt>
-                  <dd className="font-brand text-4xl leading-none">{showcase.length}</dd>
+                  <dd className="font-brand text-4xl leading-none"><CountUp to={showcase.length} /></dd>
                   <dd className="mt-1 text-sm text-ink-soft">{site.texts.stats_products}</dd>
                 </div>
                 <div>
                   <dt className="sr-only">Univers</dt>
-                  <dd className="font-brand text-4xl leading-none">{categoriesCount}</dd>
+                  <dd className="font-brand text-4xl leading-none"><CountUp to={categoriesCount} /></dd>
                   <dd className="mt-1 text-sm text-ink-soft">{site.texts.stats_categories}</dd>
                 </div>
               </motion.dl>
@@ -258,11 +260,7 @@ export default function HomePage() {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="aspect-[3/4] animate-pulse rounded-[1.5rem] bg-blush-deep" />
-            ))}
-          </div>
+          <ProductGridSkeleton count={4} className="md:grid-cols-4 xl:grid-cols-4" />
         ) : featured.length === 0 ? (
           <div className="rounded-[1.75rem] bg-white px-6 py-16 text-center ring-1 ring-blush-edge/60">
             <p className="font-brand text-2xl text-wine">{site.texts.home_featured_empty_title}</p>

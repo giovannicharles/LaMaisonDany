@@ -14,6 +14,7 @@ import { ProductArt, artKindFor } from "@/components/art/Bottles";
 import { useOrder } from "@/components/public/OrderDialog";
 import ProductCard from "@/components/public/ProductCard";
 import HowToOrder from "@/components/public/HowToOrder";
+import { Skeleton } from "@/components/public/Skeleton";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
 import WhatsAppIcon from "@/components/public/WhatsAppIcon";
 import Seo from "@/components/public/Seo";
@@ -137,13 +138,14 @@ export default function ProductDetailPage() {
   if (loading) {
     return (
       <div className={`${shell} pt-[140px] pb-24`}>
-        <div className="grid md:grid-cols-2 gap-10 md:gap-20 animate-pulse">
-          <div className="aspect-[4/5] rounded-[2rem] bg-blush-deep" />
+        <div role="status" aria-label="Chargement" className="grid md:grid-cols-2 gap-10 md:gap-20">
+          <Skeleton className="aspect-[4/5] rounded-[2rem]" />
           <div className="space-y-4 pt-10">
-            <div className="h-5 w-1/4 rounded-full bg-blush-deep" />
-            <div className="h-14 w-3/4 rounded-2xl bg-blush-deep" />
-            <div className="h-8 w-1/3 rounded-full bg-blush-deep" />
-            <div className="h-28 rounded-2xl bg-blush-deep" />
+            <Skeleton className="h-5 w-1/4 rounded-full" />
+            <Skeleton className="h-14 w-3/4 rounded-2xl" />
+            <Skeleton className="h-8 w-1/3 rounded-full" />
+            <Skeleton className="h-28 rounded-2xl" />
+            <Skeleton className="h-14 w-full rounded-full" />
           </div>
         </div>
       </div>

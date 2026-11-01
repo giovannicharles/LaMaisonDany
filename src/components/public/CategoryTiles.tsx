@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { api } from "@/api/client";
 import type { Category, Product } from "@/types";
+import { TilesSkeleton } from "./Skeleton";
 import { EASE } from "@/lib/motion";
 import { optimizeImage } from "@/lib/images";
 import { ProductArt, artKindFor } from "@/components/art/Bottles";
@@ -21,6 +22,7 @@ const TEXT = ["text-wine", "text-blush", "text-blush", "text-wine"];
 export default function CategoryTiles() {
   const [categories, setCategories] = useState<Category[]>(FALLBACK);
   const [products, setProducts] = useState<Product[]>([]);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     Promise.all([api.categories.list(), api.products.list()])
@@ -31,13 +33,16 @@ export default function CategoryTiles() {
         const shown = withPhoto.length > 0 ? withPhoto : withProducts;
         if (shown.length) setCategories(shown);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setReady(true));
   }, []);
 
   const coverFor = (c: Category) =>
     products.find((p) => p.category_id === c.id && p.image_url && p.featured)?.image_url ??
     products.find((p) => p.category_id === c.id && p.image_url)?.image_url ??
     null;
+
+  if (!ready) return <TilesSkeleton count={4} />;
 
   return (
     <motion.ul

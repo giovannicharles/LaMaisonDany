@@ -6,6 +6,7 @@ import Footer from "./Footer";
 import WhatsAppButton from "./WhatsAppButton";
 import ChatBot from "./ChatBot";
 import Preloader from "./Preloader";
+import BackToTop from "./BackToTop";
 import { OrderProvider } from "./OrderDialog";
 import { EASE } from "@/lib/motion";
 import { SiteProvider, useSite } from "@/lib/siteContent";
@@ -95,6 +96,7 @@ function Shell() {
               <Footer />
               <aside aria-label="Aide et contact rapide">
                 <ChatBot />
+                <BackToTop />
                 {options.show_floating_whatsapp && <WhatsAppButton />}
               </aside>
             </>

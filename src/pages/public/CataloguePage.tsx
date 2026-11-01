@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDownUp, Search, X } from "lucide-react";
 import { api, whatsappLink } from "@/api/client";
 import type { Product, Category } from "@/types";
+import { ProductGridSkeleton } from "@/components/public/Skeleton";
 import ProductCard from "@/components/public/ProductCard";
 import PageHeader from "@/components/public/PageHeader";
 import WhatsAppIcon from "@/components/public/WhatsAppIcon";
@@ -179,18 +180,7 @@ export default function CataloguePage() {
         )}
 
         {loading ? (
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 xl:grid-cols-4">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="overflow-hidden rounded-[1.5rem] bg-white ring-1 ring-blush-edge/60">
-                <div className="aspect-[4/5] animate-pulse bg-blush-deep" />
-                <div className="space-y-3 p-5">
-                  <div className="h-4 w-4/5 animate-pulse rounded-full bg-blush-deep" />
-                  <div className="h-4 w-1/3 animate-pulse rounded-full bg-blush-deep" />
-                  <div className="h-11 animate-pulse rounded-full bg-blush-deep" />
-                </div>
-              </div>
-            ))}
-          </div>
+          <ProductGridSkeleton count={8} />
         ) : failed ? (
           <div className="rounded-[1.75rem] bg-white px-6 py-16 text-center ring-1 ring-blush-edge/60">
             <p className="font-brand text-2xl text-wine">{site.texts.shop_error_title}</p>
@@ -220,14 +210,15 @@ export default function CataloguePage() {
         ) : (
           <motion.ul layout className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 xl:grid-cols-4">
             <AnimatePresence mode="popLayout" initial={false}>
-              {results.map((p) => (
+              {results.map((p, i) => (
                 <motion.li
                   key={p.id}
                   layout
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 28, filter: "blur(4px)" }}
+                  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  viewport={{ once: true, amount: 0.1 }}
                   exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ duration: 0.45, ease: EASE }}
+                  transition={{ duration: 0.6, delay: (i % 4) * 0.06, ease: EASE }}
                 >
                   <ProductCard product={p} />
                 </motion.li>

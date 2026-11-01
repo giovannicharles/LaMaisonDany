@@ -133,6 +133,8 @@ export const TEXT_FIELDS: TextField[] = [
   { key: "chat_placeholder", group: "Assistant", label: "Texte dans la zone de message", value: "Écrivez votre question" },
   { key: "order_quantity", group: "Commande", label: "Libellé de la quantité", value: "Quantité" },
   { key: "order_note", group: "Commande", label: "Note sous le bouton d'envoi", long: true, value: "WhatsApp s'ouvre avec ce message, vous pouvez encore le modifier." },
+  { key: "footer_credit", group: "Pied de page", label: "Mention de réalisation", value: "Powered by Giovanni Charles E." },
+  { key: "back_to_top", group: "Boutons", label: "Bouton « haut de page » (accessibilité)", value: "Revenir en haut" },
   { key: "loader_tagline", group: "Écran de chargement", label: "Phrase sous le nom", value: "Parfums, cosmétiques, vins & plus" },
   { key: "brands_list", group: "Accueil", label: "Marques affichées en défilement", hint: "Séparées par des virgules. Laissez vide pour masquer la bande.", long: true, value: "J.P. Chenet, Jean Paul Gaultier, Mauboussin, Diana Castel, Jacques Saint Pres, Mixa, Le Petit Marseillais, Cadum, Yves Rocher, Byphasse, Lacura, Femfresh, Brut, Carré Homme" },
   { key: "videos_title", group: "Accueil", label: "Titre de la section vidéos", value: "Nos produits *en vidéo*" },

@@ -1,4 +1,6 @@
-import { type CSSProperties } from "react";
+import type React from "react";
+import { useRef, type CSSProperties } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface OrnamentProps {
@@ -8,9 +10,18 @@ interface OrnamentProps {
 
 const base = "pointer-events-none absolute -z-10 select-none";
 
+function useDrift(amount: number) {
+  const ref = useRef<SVGSVGElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref as unknown as React.RefObject<HTMLElement>, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [amount, -amount]);
+  return { ref, y };
+}
+
 export function Sprig({ className, style }: OrnamentProps) {
+  const { ref, y } = useDrift(40);
   return (
-    <svg aria-hidden viewBox="0 0 160 360" fill="none" className={cn(base, className)} style={style}>
+    <motion.svg ref={ref} aria-hidden viewBox="0 0 160 360" fill="none" className={cn(base, className)} style={{ ...style, y }}>
       <path d="M82 356C74 280 90 200 70 120C60 80 72 40 84 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
       {[
         [74, 300, -38], [88, 262, 40], [72, 222, -42], [90, 184, 44],
@@ -27,7 +38,7 @@ export function Sprig({ className, style }: OrnamentProps) {
         />
       ))}
       <circle cx="84" cy="6" r="4" fill="currentColor" />
-    </svg>
+    </motion.svg>
   );
 }
 
@@ -67,33 +78,36 @@ export function Waves({ className, style }: OrnamentProps) {
 }
 
 export function DotGrid({ className, style }: OrnamentProps) {
+  const { ref, y } = useDrift(24);
   return (
-    <svg aria-hidden viewBox="0 0 160 160" fill="currentColor" className={cn(base, className)} style={style}>
+    <motion.svg ref={ref} aria-hidden viewBox="0 0 160 160" fill="currentColor" className={cn(base, className)} style={{ ...style, y }}>
       {Array.from({ length: 64 }, (_, i) => (
         <circle key={i} cx={10 + (i % 8) * 20} cy={10 + Math.floor(i / 8) * 20} r="2.2" />
       ))}
-    </svg>
+    </motion.svg>
   );
 }
 
 export function Arches({ className, style }: OrnamentProps) {
+  const { ref, y } = useDrift(32);
   return (
-    <svg aria-hidden viewBox="0 0 300 360" fill="none" stroke="currentColor" strokeWidth="1.3" className={cn(base, className)} style={style}>
+    <motion.svg ref={ref} aria-hidden viewBox="0 0 300 360" fill="none" stroke="currentColor" strokeWidth="1.3" className={cn(base, className)} style={{ ...style, y }}>
       {[0, 1, 2, 3].map((i) => (
         <path key={i} d={`M${20 + i * 22} 350V${170 + i * 22}a${130 - i * 22} ${130 - i * 22} 0 0 1 ${260 - i * 44} 0V350`} />
       ))}
-    </svg>
+    </motion.svg>
   );
 }
 
 export function Vine({ className, style }: OrnamentProps) {
+  const { ref, y } = useDrift(36);
   return (
-    <svg aria-hidden viewBox="0 0 240 300" fill="none" className={cn(base, className)} style={style}>
+    <motion.svg ref={ref} aria-hidden viewBox="0 0 240 300" fill="none" className={cn(base, className)} style={{ ...style, y }}>
       <path d="M20 10C60 40 40 90 90 110S170 130 150 180" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       {[[116, 150], [140, 170], [100, 168], [128, 192], [152, 200], [112, 190], [138, 218], [122, 238]].map(([x, y], i) => (
         <circle key={i} cx={x} cy={y} r="13" fill="currentColor" fillOpacity={0.28} stroke="currentColor" strokeWidth="1.2" />
       ))}
       <path d="M54 52c18-26 46-20 54-4-18 22-42 22-54 4Z" fill="currentColor" fillOpacity={0.3} stroke="currentColor" strokeWidth="1.2" />
-    </svg>
+    </motion.svg>
   );
 }

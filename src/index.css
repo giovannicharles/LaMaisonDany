@@ -169,6 +169,8 @@
 .lmd-drift { animation: lmd-drift 38s linear infinite; }
 .lmd-shimmer::after { content: ""; position: absolute; inset: 0; background-size: 200% 100%; background-image: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%); animation: lmd-shimmer 1.6s ease-in-out infinite; pointer-events: none; }
 @keyframes lmd-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.lmd-skel { position: relative; overflow: hidden; background: var(--color-blush-deep); }
+.lmd-skel::after { content: ""; position: absolute; inset: 0; background-size: 200% 100%; background-image: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%); animation: lmd-shimmer 1.6s ease-in-out infinite; }
 .lmd-wave { animation: lmd-wave 9s linear infinite; }
 .lmd-grid { animation: lmd-grid 6s linear infinite; }
 @keyframes lmd-wave { to { transform: translateX(-50%); } }
@@ -177,7 +179,7 @@
 @keyframes lmd-spin { to { transform: rotate(360deg); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .lmd-rise, .lmd-float, .lmd-drift, .lmd-spin, .lmd-wave, .lmd-grid, .lmd-shimmer::after { animation: none; }
+  .lmd-rise, .lmd-float, .lmd-drift, .lmd-spin, .lmd-wave, .lmd-grid, .lmd-shimmer::after, .lmd-skel::after { animation: none; }
   html { scroll-behavior: auto; }
 }
 

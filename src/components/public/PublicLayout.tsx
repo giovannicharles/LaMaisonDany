@@ -7,6 +7,7 @@ import WhatsAppButton from "./WhatsAppButton";
 import ChatBot from "./ChatBot";
 import Preloader from "./Preloader";
 import BackToTop from "./BackToTop";
+import InstallPrompt from "./InstallPrompt";
 import { OrderProvider } from "./OrderDialog";
 import { EASE } from "@/lib/motion";
 import { SiteProvider, useSite } from "@/lib/siteContent";
@@ -97,6 +98,7 @@ function Shell() {
               <aside aria-label="Aide et contact rapide">
                 <ChatBot />
                 <BackToTop />
+                <InstallPrompt />
                 {options.show_floating_whatsapp && <WhatsAppButton />}
               </aside>
             </>

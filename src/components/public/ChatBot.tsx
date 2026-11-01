@@ -118,7 +118,7 @@ export default function ChatBot() {
           const all = (await api.products.list()).data;
           found = data.product_slugs.map((slug) => all.find((p) => p.slug === slug)).filter((p): p is Product => Boolean(p));
         }
-        setMessages((m) => [...m, { id: nextId++, from: "bot", text: data.reply, products: found, handoff: data.handoff }]);
+        setMessages((m) => [...m, { id: nextId++, from: "bot", text: data.reply.replace(/\s*[—–]\s*/g, ", "), products: found, handoff: data.handoff }]);
         setTyping(false);
         return;
       } catch (err) {

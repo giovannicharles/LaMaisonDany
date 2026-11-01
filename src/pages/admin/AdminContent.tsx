@@ -9,6 +9,7 @@ type SectionKey = keyof SiteContent;
 
 const TABS: { id: string; label: string; keys: SectionKey[] }[] = [
   { id: "general", label: "Général", keys: ["general"] },
+  { id: "options", label: "Réglages", keys: ["options"] },
   { id: "texts", label: "Titres et textes", keys: ["texts"] },
   { id: "seo", label: "Référencement", keys: ["seo"] },
   { id: "home", label: "Accueil", keys: ["hero", "about_home", "banner"] },
@@ -19,6 +20,29 @@ const TABS: { id: string; label: string; keys: SectionKey[] }[] = [
   { id: "videos", label: "Vidéos", keys: ["videos"] },
   { id: "chatbot", label: "Chatbot", keys: ["chatbot"] },
 ];
+
+function ColorField({ label, value, fallback, onChange }: { label: string; value: string; fallback: string; onChange: (v: string) => void }) {
+  return (
+    <div>
+      <p className="mb-1.5 text-[0.9rem] font-medium text-wine">{label}</p>
+      <div className="flex items-center gap-3">
+        <input
+          type="color"
+          aria-label={label}
+          value={/^#[0-9a-fA-F]{6}$/.test(value) ? value : fallback}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-11 w-14 cursor-pointer rounded-xl border border-blush-edge bg-white p-1"
+        />
+        <TextInput aria-label={label + " (code)"} value={value} onChange={(e) => onChange(e.target.value.trim())} placeholder={fallback} className="max-w-[9rem]" />
+        {value && (
+          <button type="button" onClick={() => onChange("")} className="text-sm text-rose underline underline-offset-2">
+            Rétablir
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 const ICON_LABELS: Record<string, string> = {
   sparkles: "Étincelles",
@@ -220,6 +244,7 @@ export default function AdminContent({ initialTab }: { initialTab?: string }) {
   };
 
   const g = content.general;
+  const o = content.options;
 
   return (
     <>
@@ -288,6 +313,67 @@ export default function AdminContent({ initialTab }: { initialTab?: string }) {
                 <Field label="Facebook (lien)" htmlFor="g-fb"><TextInput id="g-fb" value={g.facebook} onChange={(e) => set("general", { facebook: e.target.value })} placeholder="https://" /></Field>
                 <Field label="TikTok (lien)" htmlFor="g-tt"><TextInput id="g-tt" value={g.tiktok} onChange={(e) => set("general", { tiktok: e.target.value })} placeholder="https://" /></Field>
               </div>
+            </>
+          )}
+
+          {tab === "options" && (
+            <>
+              <h3 className="font-brand text-2xl text-wine">Apparence</h3>
+              <p className="-mt-3 text-sm text-ink-soft">Laissez vide pour garder les couleurs d'origine. Les changements s'appliquent à tout le site.</p>
+              <div className="grid gap-5 sm:grid-cols-3">
+                <ColorField label="Couleur principale" value={o.color_wine} fallback="#6b1730" onChange={(v) => set("options", { color_wine: v })} />
+                <ColorField label="Couleur d'accent" value={o.color_rose} fallback="#b23a5b" onChange={(v) => set("options", { color_rose: v })} />
+                <ColorField label="Couleur de fond" value={o.color_blush} fallback="#fbeef0" onChange={(v) => set("options", { color_blush: v })} />
+              </div>
+
+              <h3 className="mt-4 font-brand text-2xl text-wine">Sections de l'accueil</h3>
+              <p className="-mt-3 text-sm text-ink-soft">Affichez ou masquez chaque bloc de la page d'accueil.</p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Toggle label="Écran de chargement animé" checked={o.show_preloader} onChange={(v) => set("options", { show_preloader: v })} />
+                <Toggle label="Bandeau d'atouts" checked={o.show_reassurance} onChange={(v) => set("options", { show_reassurance: v })} />
+                <Toggle label="Marques en défilement" checked={o.show_brands} onChange={(v) => set("options", { show_brands: v })} />
+                <Toggle label="Catégories" checked={o.show_categories} onChange={(v) => set("options", { show_categories: v })} />
+                <Toggle label="Coups de cœur" checked={o.show_featured} onChange={(v) => set("options", { show_featured: v })} />
+                <Toggle label="Vidéos" checked={o.show_videos} onChange={(v) => set("options", { show_videos: v })} />
+                <Toggle label="Présentation de la maison" checked={o.show_about} onChange={(v) => set("options", { show_about: v })} />
+                <Toggle label="Comment commander" checked={o.show_howto} onChange={(v) => set("options", { show_howto: v })} />
+                <Toggle label="Questions fréquentes" checked={o.show_faq} onChange={(v) => set("options", { show_faq: v })} />
+              </div>
+
+              <h3 className="mt-4 font-brand text-2xl text-wine">Fonctions du site</h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Toggle label="Bouton WhatsApp flottant" checked={o.show_floating_whatsapp} onChange={(v) => set("options", { show_floating_whatsapp: v })} />
+                <Toggle label="Afficher les prix" checked={o.show_prices} onChange={(v) => set("options", { show_prices: v })} />
+                <Toggle label="Bouton « Installer l'application »" checked={o.show_install_button} onChange={(v) => set("options", { show_install_button: v })} />
+                <Toggle label="Formulaire de contact" checked={o.show_contact_form} onChange={(v) => set("options", { show_contact_form: v })} />
+              </div>
+              <p className="-mt-2 text-sm text-ink-soft">L'assistant (chatbot) se règle dans l'onglet Chatbot, la barre du haut dans Titres et textes.</p>
+
+              <h3 className="mt-4 font-brand text-2xl text-wine">Boutique</h3>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field label="Tri par défaut" htmlFor="o-sort">
+                  <Select id="o-sort" value={o.default_sort} onChange={(e) => set("options", { default_sort: e.target.value as typeof o.default_sort })}>
+                    <option value="default">Notre sélection</option>
+                    <option value="price-asc">Prix croissant</option>
+                    <option value="price-desc">Prix décroissant</option>
+                    <option value="name">Nom A → Z</option>
+                  </Select>
+                </Field>
+                <div className="flex items-end pb-2">
+                  <Toggle label="Cacher les produits indisponibles" checked={o.hide_unavailable} onChange={(v) => set("options", { hide_unavailable: v })} />
+                </div>
+              </div>
+
+              <h3 className="mt-4 font-brand text-2xl text-wine">Maintenance</h3>
+              <Toggle label="Mettre le site en maintenance (les visiteurs voient uniquement le message ci-dessous)" checked={o.maintenance} onChange={(v) => set("options", { maintenance: v })} />
+              <Field label="Message de maintenance" htmlFor="o-mt">
+                <TextArea id="o-mt" rows={2} value={o.maintenance_text} onChange={(e) => set("options", { maintenance_text: e.target.value })} />
+              </Field>
+
+              <h3 className="mt-4 font-brand text-2xl text-wine">Statistiques de visite</h3>
+              <Field label="Identifiant Google Analytics" htmlFor="o-ga" hint="Format G-XXXXXXXXXX. Laissez vide pour ne rien suivre.">
+                <TextInput id="o-ga" value={o.analytics_id} onChange={(e) => set("options", { analytics_id: e.target.value.trim().toUpperCase() })} placeholder="G-XXXXXXXXXX" className="max-w-xs" />
+              </Field>
             </>
           )}
 

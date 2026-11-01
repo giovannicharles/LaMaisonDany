@@ -35,7 +35,8 @@ export default function CataloguePage() {
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<SortKey>("default");
+  const [sortPick, setSort] = useState<SortKey | null>(null);
+  const sort: SortKey = sortPick ?? site.options.default_sort;
   const [searchParams, setSearchParams] = useSearchParams();
   const activeCategory = searchParams.get("categorie") ?? "";
   const setActiveCategory = (slug: string) => setSearchParams(slug ? { categorie: slug } : {}, { replace: true });
@@ -63,6 +64,7 @@ export default function CataloguePage() {
     const q = norm(search.trim());
     let list = products.filter(
       (p) =>
+        (!site.options.hide_unavailable || p.available !== false) &&
         (!activeCategory || p.category_slug === activeCategory) &&
         (!q || norm(`${p.name} ${p.description ?? ""} ${p.category_name ?? ""}`).includes(q))
     );
@@ -78,7 +80,7 @@ export default function CataloguePage() {
       list = [...list].sort((a, b) => a.name.localeCompare(b.name, "fr"));
     }
     return list;
-  }, [products, activeCategory, search, sort]);
+  }, [products, activeCategory, search, sort, site.options.hide_unavailable]);
 
   const filtered = Boolean(activeCategory || search.trim());
   const clearAll = () => {
@@ -191,20 +193,20 @@ export default function CataloguePage() {
           </div>
         ) : failed ? (
           <div className="rounded-[1.75rem] bg-white px-6 py-16 text-center ring-1 ring-blush-edge/60">
-            <p className="font-brand text-2xl text-wine">La boutique ne répond pas pour le moment.</p>
-            <p className="mt-2 text-ink-soft">Réessayez dans un instant, ou écrivez-nous directement.</p>
+            <p className="font-brand text-2xl text-wine">{site.texts.shop_error_title}</p>
+            <p className="mt-2 text-ink-soft">{site.texts.shop_error_text}</p>
             <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="lmd-btn lmd-btn-wine mt-6">
               <WhatsAppIcon className="h-5 w-5" /> Écrire sur WhatsApp
             </a>
           </div>
         ) : results.length === 0 ? (
           <div className="rounded-[1.75rem] bg-white px-6 py-16 text-center ring-1 ring-blush-edge/60">
-            <p className="font-brand text-2xl text-wine">Aucun produit ne correspond.</p>
+            <p className="font-brand text-2xl text-wine">{site.texts.shop_empty_title}</p>
             <p className="mx-auto mt-2 max-w-[44ch] text-ink-soft">
-              Modifiez votre recherche, ou dites-nous ce que vous cherchez : nous le trouvons pour vous.
+              {site.texts.shop_empty_text}
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <button onClick={clearAll} className="lmd-btn lmd-btn-ghost">Voir tous les produits</button>
+              <button onClick={clearAll} className="lmd-btn lmd-btn-ghost">{site.texts.shop_reset_button}</button>
               <a
                 href={whatsappLink(`Bonjour LaMaison Dany, je cherche : ${search.trim() || "un produit"}. Pouvez-vous m'aider ?`)}
                 target="_blank"

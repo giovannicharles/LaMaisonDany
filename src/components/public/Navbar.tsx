@@ -8,10 +8,10 @@ import { useSite } from "@/lib/siteContent";
 import WhatsAppIcon from "./WhatsAppIcon";
 
 const links = [
-  { to: "/", label: "Accueil", end: true },
-  { to: "/catalogue", label: "Boutique" },
-  { to: "/a-propos", label: "À propos" },
-  { to: "/contact", label: "Contact" },
+  { to: "/", key: "nav_home", end: true },
+  { to: "/catalogue", key: "nav_shop" },
+  { to: "/a-propos", key: "nav_about" },
+  { to: "/contact", key: "nav_contact" },
 ];
 
 export default function Navbar() {
@@ -106,7 +106,7 @@ export default function Navbar() {
               >
                 {({ isActive }) => (
                   <>
-                    {l.label}
+                    {texts[l.key]}
                     {isActive && (
                       <motion.span
                         layoutId="nav-underline"
@@ -129,7 +129,7 @@ export default function Navbar() {
             className="lmd-btn lmd-btn-wine !py-2.5 !px-5 !text-sm hidden sm:inline-flex"
           >
             <WhatsAppIcon className="h-4 w-4" />
-            Nous écrire
+            {texts.nav_cta}
           </a>
           <button
             className="md:hidden p-2 -mr-2 text-wine"
@@ -158,7 +158,7 @@ export default function Navbar() {
                     )
                   }
                 >
-                  {l.label}
+                  {texts[l.key]}
                 </NavLink>
               </li>
             ))}
@@ -170,7 +170,7 @@ export default function Navbar() {
             className="lmd-btn lmd-btn-wine w-full mt-4"
           >
             <WhatsAppIcon className="h-5 w-5" />
-            Nous écrire sur WhatsApp
+            {texts.nav_cta}
           </a>
         </div>
       )}

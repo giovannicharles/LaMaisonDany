@@ -43,6 +43,7 @@ function Photo({ src, className, eager = false }: { src: string; className?: str
 
 export default function HomePage() {
   const site = useSite();
+  const o = site.options;
   const showcase = useShowcase();
   const [featured, setFeatured] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,12 +117,12 @@ export default function HomePage() {
                 <div>
                   <dt className="sr-only">Produits</dt>
                   <dd className="font-brand text-4xl leading-none">{showcase.length}</dd>
-                  <dd className="mt-1 text-sm text-ink-soft">produits en boutique</dd>
+                  <dd className="mt-1 text-sm text-ink-soft">{site.texts.stats_products}</dd>
                 </div>
                 <div>
                   <dt className="sr-only">Univers</dt>
                   <dd className="font-brand text-4xl leading-none">{categoriesCount}</dd>
-                  <dd className="mt-1 text-sm text-ink-soft">univers à découvrir</dd>
+                  <dd className="mt-1 text-sm text-ink-soft">{site.texts.stats_categories}</dd>
                 </div>
               </motion.dl>
             )}
@@ -183,6 +184,8 @@ export default function HomePage() {
       </section>
 
       {/* Reassurance */}
+      {o.show_reassurance && (
+      <>
       <section className="bg-wine text-blush" aria-label="Nos engagements">
         <motion.ul
           className="mx-auto grid max-w-[1320px] grid-cols-1 gap-x-6 gap-y-6 px-5 py-8 md:px-10 min-[520px]:grid-cols-2 lg:grid-cols-4"
@@ -215,9 +218,14 @@ export default function HomePage() {
         </motion.ul>
       </section>
 
-      <BrandMarquee />
+      </>
+      )}
+
+      {o.show_brands && <BrandMarquee />}
 
       {/* Categories */}
+      {o.show_categories && (
+      <>
       <section className="relative isolate mx-auto max-w-[1320px] px-5 pt-24 md:px-10 md:pt-32">
         <Arches className="-right-10 top-16 hidden h-[360px] text-wine/10 md:block" />
         <Sparkle className="lmd-float right-[12%] top-24 h-5 w-5 text-rose/40" />
@@ -227,7 +235,12 @@ export default function HomePage() {
         <CategoryTiles />
       </section>
 
+      </>
+      )}
+
       {/* Featured */}
+      {o.show_featured && (
+      <>
       <section className="relative isolate mx-auto max-w-[1320px] px-5 py-24 md:px-10 md:py-32">
         <Vine className="-left-14 top-10 hidden h-[300px] text-rose/20 xl:block" />
         <DotGrid className="-right-4 bottom-20 hidden h-32 w-32 text-wine/10 md:block" />
@@ -267,9 +280,14 @@ export default function HomePage() {
         )}
       </section>
 
-      <VideoReels />
+      </>
+      )}
+
+      {o.show_videos && <VideoReels />}
 
       {/* About collage */}
+      {o.show_about && (
+      <>
       <section className="relative isolate overflow-hidden bg-blush-deep/60">
         <Rings className="lmd-spin -right-52 -top-40 h-[620px] w-[620px] text-wine/10" />
         <Sprig className="-left-8 bottom-0 hidden h-[360px] -rotate-12 text-wine/15 lg:block" />
@@ -333,7 +351,12 @@ export default function HomePage() {
         </div>
       </section>
 
+      </>
+      )}
+
       {/* How to order */}
+      {o.show_howto && (
+      <>
       <section className="relative isolate mx-auto max-w-[1320px] px-5 py-24 md:px-10 md:py-32">
         <Waves className="inset-x-0 top-1/3 h-24 w-full text-rose/20" />
         <Sparkle className="lmd-float right-[6%] top-20 h-6 w-6 text-wine/40" />
@@ -343,7 +366,12 @@ export default function HomePage() {
         <HowToOrder />
       </section>
 
+      </>
+      )}
+
       {/* FAQ */}
+      {o.show_faq && (
+      <>
       <section className="relative isolate mx-auto grid max-w-[1320px] gap-10 px-5 pb-24 md:px-10 md:pb-32 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
         <div>
           <h2 className="font-brand text-4xl leading-[1.05] text-wine md:text-5xl">
@@ -355,6 +383,9 @@ export default function HomePage() {
           <Faq />
         </ScrollReveal>
       </section>
+
+      </>
+      )}
 
       {/* Final banner */}
       <section ref={bannerRef} className="relative isolate overflow-hidden bg-gradient-to-br from-wine to-wine-deep text-blush">

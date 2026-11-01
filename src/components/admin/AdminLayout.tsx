@@ -43,6 +43,7 @@ export type NavGroupData = {
 
 const CONTENT_TABS: [string, string][] = [
   ["general", "Général"],
+  ["options", "Réglages"],
   ["texts", "Titres et textes"],
   ["seo", "Référencement"],
   ["home", "Accueil"],

@@ -5,7 +5,7 @@ import { useSite } from "@/lib/siteContent";
 import WhatsAppIcon from "./WhatsAppIcon";
 
 export default function WhatsAppButton() {
-  useSite();
+  const { texts } = useSite();
   const onProductPage = useLocation().pathname.startsWith("/produit/");
   return (
     <motion.a
@@ -21,7 +21,7 @@ export default function WhatsAppButton() {
     >
       <span aria-hidden className="absolute inset-0 rounded-full bg-wine animate-ping opacity-25 [animation-duration:2.8s]" />
       <WhatsAppIcon className="relative h-5 w-5" />
-      <span className="relative hidden sm:inline">Nous écrire</span>
+      <span className="relative hidden sm:inline">{texts.floating_whatsapp_label}</span>
     </motion.a>
   );
 }

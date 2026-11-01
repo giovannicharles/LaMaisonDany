@@ -119,7 +119,7 @@ function OrderDialog({ product, onClose }: { product: Product; onClose: () => vo
         <p className="mt-6 text-[0.95rem] text-ink-soft">{site.order_dialog.intro}</p>
 
         <div className="mt-5 flex items-center justify-between rounded-2xl bg-white/70 px-4 py-3">
-          <span className="font-medium text-wine">Quantité</span>
+          <span className="font-medium text-wine">{site.texts.order_quantity}</span>
           <div className="flex items-center gap-3">
             <button
               onClick={() => changeQty(quantity - 1)}
@@ -174,7 +174,7 @@ function OrderDialog({ product, onClose }: { product: Product; onClose: () => vo
           <WhatsAppIcon className="h-5 w-5" />
           Envoyer sur WhatsApp
         </button>
-        <p className="mt-3 text-center text-sm text-ink-soft">WhatsApp s'ouvre avec ce message, vous pouvez encore le modifier.</p>
+        <p className="mt-3 text-center text-sm text-ink-soft">{site.texts.order_note}</p>
       </motion.div>
     </motion.div>
   );

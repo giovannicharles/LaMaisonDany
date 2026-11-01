@@ -12,7 +12,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { api, configureWhatsApp, DEFAULT_PRODUCT_TEMPLATE } from "@/api/client";
-import { setCurrency } from "@/lib/utils";
+import { setCurrency, setPricesVisible } from "@/lib/utils";
 import { LOCAL_VIDEOS, type SiteVideo } from "@/data/videos";
 
 export interface ChatReply {
@@ -37,6 +37,7 @@ export interface SiteContent {
     opening_hours: string;
   };
   texts: Record<string, string>;
+  options: SiteOptions;
   videos: SiteVideo[];
   seo: { title: string; description: string; og_image_url: string };
   hero: {
@@ -66,6 +67,30 @@ export interface SiteContent {
   };
 }
 
+export interface SiteOptions {
+  color_wine: string;
+  color_rose: string;
+  color_blush: string;
+  show_preloader: boolean;
+  show_reassurance: boolean;
+  show_brands: boolean;
+  show_categories: boolean;
+  show_featured: boolean;
+  show_videos: boolean;
+  show_about: boolean;
+  show_howto: boolean;
+  show_faq: boolean;
+  show_floating_whatsapp: boolean;
+  show_prices: boolean;
+  show_install_button: boolean;
+  show_contact_form: boolean;
+  default_sort: "default" | "price-asc" | "price-desc" | "name";
+  hide_unavailable: boolean;
+  maintenance: boolean;
+  maintenance_text: string;
+  analytics_id: string;
+}
+
 export interface TextField {
   key: string;
   group: string;
@@ -78,6 +103,36 @@ export interface TextField {
 export const TEXT_FIELDS: TextField[] = [
   { key: "topbar_text", group: "Barre du haut", label: "Message de la barre du haut", hint: "Laissez vide pour masquer la barre.", value: "Prix, disponibilité, commande : sur WhatsApp." },
   { key: "topbar_link", group: "Barre du haut", label: "Lien à la suite du message", hint: "Ouvre WhatsApp. Laissez vide pour ne pas l'afficher.", value: "Écrire →" },
+  { key: "nav_home", group: "Menu", label: "Menu : accueil", value: "Accueil" },
+  { key: "nav_shop", group: "Menu", label: "Menu : boutique", value: "Boutique" },
+  { key: "nav_about", group: "Menu", label: "Menu : à propos", value: "À propos" },
+  { key: "nav_contact", group: "Menu", label: "Menu : contact", value: "Contact" },
+  { key: "nav_cta", group: "Menu", label: "Bouton du menu (WhatsApp)", value: "Nous écrire" },
+  { key: "floating_whatsapp_label", group: "Boutons", label: "Bouton WhatsApp flottant", value: "Nous écrire" },
+  { key: "card_button", group: "Boutons", label: "Bouton des produits (grand écran)", value: "Demander sur WhatsApp" },
+  { key: "card_button_short", group: "Boutons", label: "Bouton des produits (petit écran)", value: "Demander" },
+  { key: "footer_nav_title", group: "Pied de page", label: "Titre de la colonne navigation", value: "Navigation" },
+  { key: "footer_contact_title", group: "Pied de page", label: "Titre de la colonne contact", value: "Nous joindre" },
+  { key: "footer_install", group: "Pied de page", label: "Bouton d'installation de l'application", value: "Installer l'application" },
+  { key: "shop_error_title", group: "Boutique", label: "Titre si la boutique ne répond pas", value: "La boutique ne répond pas pour le moment." },
+  { key: "shop_error_text", group: "Boutique", label: "Texte si la boutique ne répond pas", long: true, value: "Réessayez dans un instant, ou écrivez-nous directement." },
+  { key: "shop_empty_title", group: "Boutique", label: "Titre quand aucun produit ne correspond", value: "Aucun produit ne correspond." },
+  { key: "shop_empty_text", group: "Boutique", label: "Texte quand aucun produit ne correspond", long: true, value: "Modifiez votre recherche, ou dites-nous ce que vous cherchez : nous le trouvons pour vous." },
+  { key: "shop_reset_button", group: "Boutique", label: "Bouton « tous les produits »", value: "Voir tous les produits" },
+  { key: "product_unavailable", group: "Fiche produit", label: "Étiquette produit indisponible", value: "Indisponible" },
+  { key: "product_related_title", group: "Fiche produit", label: "Titre des produits similaires", value: "Vous aimerez *aussi*" },
+  { key: "product_howto_title", group: "Fiche produit", label: "Titre « Comment commander »", value: "Comment *commander*" },
+  { key: "product_not_found", group: "Fiche produit", label: "Message produit introuvable", value: "Ce produit est introuvable." },
+  { key: "contact_label_name", group: "Contact", label: "Champ nom", value: "Nom *" },
+  { key: "contact_label_phone", group: "Contact", label: "Champ téléphone", value: "Téléphone" },
+  { key: "contact_label_email", group: "Contact", label: "Champ email", value: "Email" },
+  { key: "contact_label_message", group: "Contact", label: "Champ message", value: "Message" },
+  { key: "contact_submit", group: "Contact", label: "Bouton d'envoi", value: "Envoyer le message" },
+  { key: "stats_products", group: "Accueil", label: "Légende : nombre de produits", value: "produits en boutique" },
+  { key: "stats_categories", group: "Accueil", label: "Légende : nombre d'univers", value: "univers à découvrir" },
+  { key: "chat_placeholder", group: "Assistant", label: "Texte dans la zone de message", value: "Écrivez votre question" },
+  { key: "order_quantity", group: "Commande", label: "Libellé de la quantité", value: "Quantité" },
+  { key: "order_note", group: "Commande", label: "Note sous le bouton d'envoi", long: true, value: "WhatsApp s'ouvre avec ce message, vous pouvez encore le modifier." },
   { key: "loader_tagline", group: "Écran de chargement", label: "Phrase sous le nom", value: "Parfums, cosmétiques, vins & plus" },
   { key: "brands_list", group: "Accueil", label: "Marques affichées en défilement", hint: "Séparées par des virgules. Laissez vide pour masquer la bande.", long: true, value: "J.P. Chenet, Jean Paul Gaultier, Mauboussin, Diana Castel, Jacques Saint Pres, Mixa, Le Petit Marseillais, Cadum, Yves Rocher, Byphasse, Lacura, Femfresh, Brut, Carré Homme" },
   { key: "videos_title", group: "Accueil", label: "Titre de la section vidéos", value: "Nos produits *en vidéo*" },
@@ -128,6 +183,29 @@ export const DEFAULT_CONTENT: SiteContent = {
     facebook: "",
     tiktok: "",
     opening_hours: "",
+  },
+  options: {
+    color_wine: "",
+    color_rose: "",
+    color_blush: "",
+    show_preloader: true,
+    show_reassurance: true,
+    show_brands: true,
+    show_categories: true,
+    show_featured: true,
+    show_videos: true,
+    show_about: true,
+    show_howto: true,
+    show_faq: true,
+    show_floating_whatsapp: true,
+    show_prices: true,
+    show_install_button: true,
+    show_contact_form: true,
+    default_sort: "default",
+    hide_unavailable: false,
+    maintenance: false,
+    maintenance_text: "Le site est en cours de mise à jour. Écrivez-nous sur WhatsApp, nous répondons à toutes vos demandes.",
+    analytics_id: "",
   },
   seo: {
     title: "LaMaison Dany : parfums, cosmétiques, vins et plus encore",
@@ -267,6 +345,46 @@ export function mergeContent(remote: Record<string, unknown>): SiteContent {
 
 const SiteContext = createContext<SiteContent>(DEFAULT_CONTENT);
 
+const HEX = /^#[0-9a-fA-F]{6}$/;
+
+function useSiteEffects(o: SiteOptions) {
+  useEffect(() => {
+    let el = document.getElementById("lmd-theme") as HTMLStyleElement | null;
+    const vars: string[] = [];
+    if (HEX.test(o.color_wine)) vars.push(`--color-wine:${o.color_wine}`, `--color-wine-deep:color-mix(in srgb, ${o.color_wine} 68%, black)`);
+    if (HEX.test(o.color_rose)) vars.push(`--color-rose:${o.color_rose}`);
+    if (HEX.test(o.color_blush)) vars.push(`--color-blush:${o.color_blush}`, `--color-blush-deep:color-mix(in srgb, ${o.color_blush} 92%, #b23a5b)`, `--color-blush-edge:color-mix(in srgb, ${o.color_blush} 80%, #b23a5b)`);
+    if (!vars.length) {
+      el?.remove();
+    } else {
+      if (!el) {
+        el = document.createElement("style");
+        el.id = "lmd-theme";
+        document.head.appendChild(el);
+      }
+      el.textContent = `:root:not(.lmd-dark){${vars.join(";")}}`;
+    }
+    try {
+      localStorage.setItem("lmd_no_intro", o.show_preloader ? "0" : "1");
+    } catch {
+      /* stockage indisponible */
+    }
+  }, [o.color_wine, o.color_rose, o.color_blush, o.show_preloader]);
+
+  useEffect(() => {
+    const id = o.analytics_id.trim();
+    if (!import.meta.env.PROD || !/^G-[A-Z0-9]{4,}$/.test(id) || document.getElementById("lmd-ga")) return;
+    const s = document.createElement("script");
+    s.id = "lmd-ga";
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
+    document.head.appendChild(s);
+    const w = window as unknown as { dataLayer: unknown[] };
+    w.dataLayer = w.dataLayer || [];
+    w.dataLayer.push(["js", new Date()], ["config", id]);
+  }, [o.analytics_id]);
+}
+
 export function SiteProvider({ children }: { children: ReactNode }) {
   const [remote, setRemote] = useState<Record<string, unknown>>({});
 
@@ -286,6 +404,8 @@ export function SiteProvider({ children }: { children: ReactNode }) {
   // Synchronous on purpose: children rendered with this content must already read the fresh values.
   configureWhatsApp(content.general.whatsapp_number, content.general.whatsapp_message, content.general.product_message);
   setCurrency(content.general.currency);
+  setPricesVisible(content.options.show_prices);
+  useSiteEffects(content.options);
 
   return <SiteContext.Provider value={content}>{children}</SiteContext.Provider>;
 }

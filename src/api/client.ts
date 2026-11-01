@@ -248,6 +248,14 @@ export const api = {
       return api.post<MediaResponse>("/media/upload", fd);
     },
   },
+  chat: {
+    send: (messages: { role: "user" | "assistant"; content: string }[]) =>
+      request<ApiResponse<{ reply: string; product_slugs: string[]; handoff: boolean }>>("/chat", {
+        method: "POST",
+        body: JSON.stringify({ messages }),
+      }),
+  },
+
   stats: {
     get: (days = 30) => api.get<Stats>(`/events/stats?days=${days}`),
   },

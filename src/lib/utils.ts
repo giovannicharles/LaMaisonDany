@@ -11,7 +11,13 @@ export function setCurrency(value: string) {
   if (value) currency = value;
 }
 
+let pricesVisible = true;
+
+export function setPricesVisible(value: boolean) {
+  pricesVisible = value;
+}
+
 export function formatPrice(price: number | null | undefined): string {
-  if (price == null) return "Prix sur demande";
+  if (price == null || !pricesVisible) return "Prix sur demande";
   return new Intl.NumberFormat("fr-FR").format(price) + " " + currency;
 }

@@ -8,6 +8,7 @@ import { formatPrice } from "@/lib/utils";
 import { optimizeImage } from "@/lib/images";
 import { track } from "@/lib/track";
 import { EASE } from "@/lib/motion";
+import Rich from "@/components/public/Rich";
 import { iconFor, useSite } from "@/lib/siteContent";
 import { ProductArt, artKindFor } from "@/components/art/Bottles";
 import { useOrder } from "@/components/public/OrderDialog";
@@ -153,7 +154,7 @@ export default function ProductDetailPage() {
     return (
       <div className={`${shell} pt-[140px] pb-24 text-center`}>
         <Seo title="Produit introuvable" noindex />
-        <p className="font-brand text-3xl text-wine">Ce produit est introuvable.</p>
+        <p className="font-brand text-3xl text-wine">{site.texts.product_not_found}</p>
         <Link to="/catalogue" className="lmd-btn lmd-btn-ghost mt-8">
           Retour à la boutique
         </Link>
@@ -215,7 +216,7 @@ export default function ProductDetailPage() {
                 </div>
               )}
               {unavailable && (
-                <span className="absolute left-4 top-4 rounded-full bg-wine px-3.5 py-1.5 text-sm font-medium text-blush">Indisponible</span>
+                <span className="absolute left-4 top-4 rounded-full bg-wine px-3.5 py-1.5 text-sm font-medium text-blush">{site.texts.product_unavailable}</span>
               )}
             </div>
             {photos.length > 1 && (
@@ -303,7 +304,7 @@ export default function ProductDetailPage() {
         <section className="bg-blush-deep/60">
           <div className={`${shell} py-20 md:py-28`}>
             <h2 className="font-brand text-3xl md:text-5xl text-wine mb-10">
-              Vous aimerez <span className="italic text-rose">aussi</span>
+              <Rich text={site.texts.product_related_title} />
             </h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               {related.map((p, i) => (
@@ -318,7 +319,7 @@ export default function ProductDetailPage() {
 
       <section className={`${shell} py-20 md:py-28`}>
         <h2 className="font-brand text-3xl md:text-5xl text-wine mb-10">
-          Comment <span className="italic text-rose">commander</span>
+          <Rich text={site.texts.product_howto_title} />
         </h2>
         <HowToOrder />
       </section>

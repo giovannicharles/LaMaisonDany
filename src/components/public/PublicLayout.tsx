@@ -8,9 +8,19 @@ import ChatBot from "./ChatBot";
 import Preloader from "./Preloader";
 import { OrderProvider } from "./OrderDialog";
 import { EASE } from "@/lib/motion";
-import { SiteProvider } from "@/lib/siteContent";
+import { SiteProvider, useSite } from "@/lib/siteContent";
+import { whatsappLink } from "@/api/client";
+import WhatsAppIcon from "./WhatsAppIcon";
 
 const SEEN_KEY = "lmd_intro_seen";
+
+function skipIntro() {
+  try {
+    return localStorage.getItem("lmd_no_intro") === "1";
+  } catch {
+    return false;
+  }
+}
 
 function alreadySeen() {
   try {
@@ -20,11 +30,12 @@ function alreadySeen() {
   }
 }
 
-export default function PublicLayout() {
+function Shell() {
+  const { options, general, texts } = useSite();
   const { pathname } = useLocation();
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4 });
-  const [intro, setIntro] = useState(() => !alreadySeen());
+  const [intro, setIntro] = useState(() => !alreadySeen() && !skipIntro());
 
   const finishIntro = useCallback(() => {
     try {
@@ -34,6 +45,10 @@ export default function PublicLayout() {
     }
     setIntro(false);
   }, []);
+
+  useEffect(() => {
+    if (!options.show_preloader) finishIntro();
+  }, [options.show_preloader, finishIntro]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -47,10 +62,7 @@ export default function PublicLayout() {
   }, [intro]);
 
   return (
-    <MotionConfig reducedMotion="user">
-      <SiteProvider>
-      <OrderProvider>
-        <div className="lmd min-h-screen flex flex-col">
+    <div className="lmd min-h-screen flex flex-col">
           {intro && <Preloader onDone={finishIntro} />}
           {!intro && (
             <>
@@ -67,17 +79,37 @@ export default function PublicLayout() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE }}
               >
-                <Outlet />
+                {options.maintenance ? (
+                  <section className="mx-auto flex min-h-[70vh] max-w-[640px] flex-col items-center justify-center px-5 pt-[120px] text-center">
+                    <h1 className="font-brand text-5xl text-wine">{general.brand}</h1>
+                    <p className="mt-5 text-lg leading-relaxed text-ink-soft">{options.maintenance_text}</p>
+                    <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="lmd-btn lmd-btn-wine mt-8">
+                      <WhatsAppIcon className="h-5 w-5" />
+                      {texts.footer_cta}
+                    </a>
+                  </section>
+                ) : (
+                  <Outlet />
+                )}
               </motion.main>
               <Footer />
               <aside aria-label="Aide et contact rapide">
                 <ChatBot />
-                <WhatsAppButton />
+                {options.show_floating_whatsapp && <WhatsAppButton />}
               </aside>
             </>
           )}
         </div>
-      </OrderProvider>
+  );
+}
+
+export default function PublicLayout() {
+  return (
+    <MotionConfig reducedMotion="user">
+      <SiteProvider>
+        <OrderProvider>
+          <Shell />
+        </OrderProvider>
       </SiteProvider>
     </MotionConfig>
   );

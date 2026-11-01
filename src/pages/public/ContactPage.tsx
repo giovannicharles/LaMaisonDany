@@ -8,7 +8,7 @@ import Rich from "@/components/public/Rich";
 import WhatsAppIcon from "@/components/public/WhatsAppIcon";
 
 export default function ContactPage() {
-  const { general, texts } = useSite();
+  const { general, texts, options } = useSite();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -82,24 +82,25 @@ export default function ContactPage() {
           </a>
         </div>
 
+        {options.show_contact_form && (
         <form onSubmit={handleSubmit} className="rounded-[2rem] bg-white/70 p-8 md:p-12 space-y-5">
           <h2 className="font-brand text-3xl text-wine">{texts.contact_form_title}</h2>
           <div>
-            <label htmlFor="c-name" className={label}>Nom *</label>
+            <label htmlFor="c-name" className={label}>{texts.contact_label_name}</label>
             <input id="c-name" className="lmd-field" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Votre nom" autoComplete="name" />
           </div>
           <div className="grid sm:grid-cols-2 gap-5">
             <div>
-              <label htmlFor="c-phone" className={label}>Téléphone</label>
+              <label htmlFor="c-phone" className={label}>{texts.contact_label_phone}</label>
               <input id="c-phone" className="lmd-field" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+509 ..." autoComplete="tel" />
             </div>
             <div>
-              <label htmlFor="c-email" className={label}>Email</label>
+              <label htmlFor="c-email" className={label}>{texts.contact_label_email}</label>
               <input id="c-email" className="lmd-field" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vous@exemple.com" autoComplete="email" />
             </div>
           </div>
           <div>
-            <label htmlFor="c-msg" className={label}>Message</label>
+            <label htmlFor="c-msg" className={label}>{texts.contact_label_message}</label>
             <textarea id="c-msg" className="lmd-field min-h-36 resize-y" value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Dites-nous ce que vous cherchez" />
           </div>
 
@@ -108,9 +109,10 @@ export default function ContactPage() {
 
           <button type="submit" disabled={sending} className="lmd-btn lmd-btn-wine w-full sm:w-auto disabled:opacity-60 disabled:pointer-events-none">
             <Send className="h-4 w-4" />
-            {sending ? "Envoi en cours..." : "Envoyer le message"}
+            {sending ? "Envoi en cours..." : texts.contact_submit}
           </button>
         </form>
+        )}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, MessageCircle, X } from "lucide-react";
-import { api, whatsappLink, whatsappProductLink } from "@/api/client";
+import { ApiError, api, whatsappLink, whatsappProductLink } from "@/api/client";
 import type { Category, Product } from "@/types";
 import { EASE } from "@/lib/motion";
 import { formatPrice } from "@/lib/utils";
@@ -52,6 +52,7 @@ export default function ChatBot() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const aiOff = useRef(false);
 
   const knowledge = useMemo(
     () => [
@@ -103,6 +104,28 @@ export default function ChatBot() {
     if (!text || typing) return;
     setMessages((m) => [...m, { id: nextId++, from: "user", text }]);
     setInput("");
+
+    if (!aiOff.current) {
+      const history = [...messages, { id: 0, from: "user" as const, text }]
+        .slice(-8)
+        .map((m) => ({ role: m.from === "user" ? ("user" as const) : ("assistant" as const), content: m.text.slice(0, 1000) }));
+      while (history.length && history[0].role !== "user") history.shift();
+      setTyping(true);
+      try {
+        const { data } = await api.chat.send(history);
+        let found: Product[] = [];
+        if (data.product_slugs.length) {
+          const all = (await api.products.list()).data;
+          found = data.product_slugs.map((slug) => all.find((p) => p.slug === slug)).filter((p): p is Product => Boolean(p));
+        }
+        setMessages((m) => [...m, { id: nextId++, from: "bot", text: data.reply, products: found, handoff: data.handoff }]);
+        setTyping(false);
+        return;
+      } catch (err) {
+        setTyping(false);
+        if (err instanceof ApiError && err.status === 503) aiOff.current = true;
+      }
+    }
 
     const words = tokens(text);
     const asked = norm(text);
@@ -302,7 +325,7 @@ export default function ChatBot() {
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Écrivez votre question"
+                  placeholder={site.texts.chat_placeholder}
                   aria-label="Votre message"
                   className="lmd-field !rounded-full !py-2.5"
                 />

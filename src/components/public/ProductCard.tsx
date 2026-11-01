@@ -9,7 +9,7 @@ import { ProductArt, artKindFor } from "@/components/art/Bottles";
 import WhatsAppIcon from "./WhatsAppIcon";
 
 export default function ProductCard({ product }: { product: Product }) {
-  useSite(); // re-render when the WhatsApp number is loaded or changed
+  const { texts } = useSite();
   const unavailable = product.available === false;
   const hasPrice = product.price != null;
   const hover = product.images?.[0];
@@ -81,8 +81,8 @@ export default function ProductCard({ product }: { product: Product }) {
           className="lmd-btn lmd-btn-wine relative z-10 mt-4 w-full !px-3 !py-3 !text-[0.9rem] whitespace-nowrap"
         >
           <WhatsAppIcon className="h-4 w-4 shrink-0" />
-          <span className="xl:hidden">Demander</span>
-          <span className="hidden xl:inline">Demander sur WhatsApp</span>
+          <span className="xl:hidden">{texts.card_button_short}</span>
+          <span className="hidden xl:inline">{texts.card_button}</span>
         </a>
       </div>
     </article>

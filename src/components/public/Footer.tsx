@@ -7,7 +7,7 @@ import WhatsAppIcon from "./WhatsAppIcon";
 import { Rings, Sparkle } from "@/components/art/Ornaments";
 
 export default function Footer() {
-  const { general, texts } = useSite();
+  const { general, texts, options } = useSite();
   const pwa = usePwaInstall();
   const socials = [
     { label: "Instagram", href: general.instagram },
@@ -43,12 +43,12 @@ export default function Footer() {
               <WhatsAppIcon className="h-5 w-5" />
               {texts.footer_cta}
             </a>
-            {pwa.canInstall && (
+            {pwa.canInstall && options.show_install_button && (
               <button
                 onClick={pwa.install}
                 className="mt-3 flex items-center gap-2 rounded-full border border-blush/30 px-5 py-2.5 text-[0.95rem] font-medium text-blush transition-colors hover:bg-blush hover:text-wine"
               >
-                <Download className="h-4 w-4" /> Installer l'application
+                <Download className="h-4 w-4" /> {texts.footer_install}
               </button>
             )}
             {pwa.showIosHint && (
@@ -59,17 +59,17 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="!font-text !text-sm !font-medium text-blush-edge mb-5">Navigation</h3>
+            <h3 className="!font-text !text-sm !font-medium text-blush-edge mb-5">{texts.footer_nav_title}</h3>
             <ul className="space-y-3 text-[0.95rem]">
-              <li><Link to="/" className="hover:text-white transition-colors">Accueil</Link></li>
-              <li><Link to="/catalogue" className="hover:text-white transition-colors">Boutique</Link></li>
-              <li><Link to="/a-propos" className="hover:text-white transition-colors">À propos</Link></li>
-              <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+              <li><Link to="/" className="hover:text-white transition-colors">{texts.nav_home}</Link></li>
+              <li><Link to="/catalogue" className="hover:text-white transition-colors">{texts.nav_shop}</Link></li>
+              <li><Link to="/a-propos" className="hover:text-white transition-colors">{texts.nav_about}</Link></li>
+              <li><Link to="/contact" className="hover:text-white transition-colors">{texts.nav_contact}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="!font-text !text-sm !font-medium text-blush-edge mb-5">Nous joindre</h3>
+            <h3 className="!font-text !text-sm !font-medium text-blush-edge mb-5">{texts.footer_contact_title}</h3>
             {infos.length > 0 ? (
               <ul className="space-y-3 text-[0.95rem]">
                 {infos.map(({ icon: Icon, text, href }) => (

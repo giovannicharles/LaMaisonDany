@@ -130,13 +130,13 @@ function VideoFields({
   );
 }
 
-export default function AdminContent() {
+export default function AdminContent({ initialTab }: { initialTab?: string }) {
   const { toast } = useFeedback();
   const [content, setContent] = useState<SiteContent>(DEFAULT_CONTENT);
   const [saved, setSaved] = useState<SiteContent>(DEFAULT_CONTENT);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [tab, setTab] = useState(TABS[0].id);
+  const [tab, setTab] = useState(TABS.some((t) => t.id === initialTab) ? (initialTab as string) : TABS[0].id);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 

@@ -4,7 +4,7 @@
  * - Photos : affichées tout de suite depuis le cache, rafraîchies en arrière-plan.
  * - Jamais mis en cache : admin (requêtes avec jeton), messages, statistiques, envois.
  * Changez VERSION pour forcer le renouvellement de tous les caches. */
-const VERSION = "v1";
+const VERSION = "v2";
 const SHELL = `lmd-shell-${VERSION}`;
 const STATIC = `lmd-static-${VERSION}`;
 const IMAGES = `lmd-images-${VERSION}`;
@@ -14,6 +14,9 @@ const CURRENT = [SHELL, STATIC, IMAGES, DATA];
 const PRECACHE = [
   "/offline.html",
   "/site.webmanifest",
+  "/admin.webmanifest",
+  "/admin-icon-192.png",
+  "/boot.js",
   "/favicon.svg",
   "/icon-192.png",
   "/fonts/bodoni-moda.woff2",

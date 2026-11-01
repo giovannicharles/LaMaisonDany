@@ -15,7 +15,7 @@ export function AButton({
   const styles: Record<Variant, string> = {
     primary: "bg-wine text-blush hover:bg-wine-deep shadow-[0_8px_18px_-10px_rgba(107,23,48,0.7)]",
     secondary: "border border-blush-edge bg-white text-wine hover:border-rose hover:bg-blush",
-    danger: "bg-red-700 text-white hover:bg-red-800",
+    danger: "bg-red-700 text-[#fff] hover:bg-red-800",
     ghost: "text-wine hover:bg-blush-deep",
   };
   return (
@@ -208,7 +208,7 @@ export function FeedbackProvider({ children }: { children: ReactNode }) {
               animate={{ y: 0, opacity: 1 }}
               exit={{ opacity: 0 }}
               className={cn(
-                "flex items-center gap-2.5 rounded-full px-5 py-3 text-[0.95rem] font-medium text-white shadow-xl",
+                "flex items-center gap-2.5 rounded-full px-5 py-3 text-[0.95rem] font-medium text-[#fff] shadow-xl",
                 t.kind === "success" ? "bg-wine" : "bg-red-700"
               )}
             >

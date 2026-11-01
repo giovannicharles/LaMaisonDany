@@ -62,6 +62,14 @@ export default function AdminDashboard({ goTo }: Props) {
   ];
   const remaining = steps.filter((s) => !s.done).length;
 
+  const pct = (n: number, d: number) => (d === 0 ? 0 : Math.round((n / d) * 100));
+  const quick = [
+    { label: "Produits avec photo", text: `${products.length - withoutPhoto} / ${products.length}`, pct: pct(products.length - withoutPhoto, products.length) },
+    { label: "Produits disponibles", text: `${products.filter((p) => p.available !== false).length} / ${products.length}`, pct: pct(products.filter((p) => p.available !== false).length, products.length) },
+    { label: "Coups de cœur", text: String(products.filter((p) => p.featured).length), pct: Math.min(100, pct(products.filter((p) => p.featured).length, 8)) },
+    { label: "Catégories remplies", text: `${categories.filter((c) => products.some((p) => p.category_id === c.id)).length} / ${categories.length}`, pct: pct(categories.filter((c) => products.some((p) => p.category_id === c.id)).length, categories.length) },
+  ];
+
   const requests = stats?.totals.whatsapp_request ?? 0;
   const views = stats?.totals.product_view ?? 0;
   const handoffs = stats?.totals.chat_handoff ?? 0;
@@ -160,7 +168,7 @@ export default function AdminDashboard({ goTo }: Props) {
         </div>
       </Panel>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-3">
         <Panel>
           <h2 className="font-brand text-2xl text-wine">Mise en route</h2>
           <p className="mt-1 text-sm text-ink-soft">{remaining === 0 ? "Tout est prêt, bravo." : `${remaining} étape(s) restante(s).`}</p>
@@ -177,6 +185,24 @@ export default function AdminDashboard({ goTo }: Props) {
               </li>
             ))}
           </ul>
+        </Panel>
+
+        <Panel>
+          <h2 className="font-brand text-2xl text-wine">Aperçu du catalogue</h2>
+          <p className="mt-1 text-sm text-ink-soft">Où en est votre boutique.</p>
+          <div className="mt-5 space-y-5">
+            {quick.map((q) => (
+              <div key={q.label}>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-ink-soft">{q.label}</span>
+                  <span className="font-medium text-wine">{q.text}</span>
+                </div>
+                <div className="mt-2 h-2 w-full rounded-full bg-blush-edge/60">
+                  <div className="h-2 rounded-full bg-rose transition-[width] duration-700" style={{ width: `${q.pct}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
         </Panel>
 
         <Panel>

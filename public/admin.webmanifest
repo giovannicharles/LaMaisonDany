@@ -1,0 +1,24 @@
+{
+  "id": "/admin",
+  "name": "LaMaison Dany - Administration",
+  "short_name": "LMD Admin",
+  "description": "Gérez les produits, le contenu et les messages de LaMaison Dany.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/admin?source=pwa",
+  "scope": "/admin",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#fbeef0",
+  "theme_color": "#4a0f22",
+  "categories": ["business", "productivity"],
+  "icons": [
+    { "src": "/admin-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/admin-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/admin-icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Messages", "short_name": "Messages", "url": "/admin?go=messages", "icons": [{ "src": "/admin-icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Produits", "short_name": "Produits", "url": "/admin?go=products", "icons": [{ "src": "/admin-icon-192.png", "sizes": "192x192", "type": "image/png" }] }
+  ]
+}

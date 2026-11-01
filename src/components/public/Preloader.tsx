@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE } from "@/lib/motion";
 import { useSite } from "@/lib/siteContent";
+import { Rings, Sparkle, Waves } from "@/components/art/Ornaments";
 
 const FIRST = "LaMaison".split("");
 const SECOND = "Dany".split("");
@@ -63,6 +64,53 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
         animate={{ y: leaving ? "100%" : "0%" }}
         transition={{ duration: 1, ease: EASE }}
       />
+
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+        animate={{ opacity: leaving ? 0 : 1 }}
+        transition={{ duration: 0.5, ease: EASE }}
+      >
+        <div
+          className="lmd-grid absolute inset-[-48px]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, rgba(107,23,48,0.14) 1px, transparent 1px), linear-gradient(to bottom, rgba(107,23,48,0.14) 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
+            WebkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 100%)",
+            maskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 100%)",
+          }}
+        />
+        <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+          {[18, 42, 66, 82].map((y, i) => (
+            <motion.line
+              key={"h" + y}
+              x1="0" x2="100" y1={y} y2={y}
+              stroke="#b23a5b" strokeOpacity="0.35" strokeWidth="0.15" vectorEffect="non-scaling-stroke"
+              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+              transition={{ duration: 1.6, delay: 0.2 + i * 0.18, ease: EASE }}
+            />
+          ))}
+          {[22, 50, 78].map((x, i) => (
+            <motion.line
+              key={"v" + x}
+              y1="0" y2="100" x1={x} x2={x}
+              stroke="#b23a5b" strokeOpacity="0.3" strokeWidth="0.15" vectorEffect="non-scaling-stroke"
+              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+              transition={{ duration: 1.6, delay: 0.4 + i * 0.2, ease: EASE }}
+            />
+          ))}
+        </svg>
+        <Rings className="lmd-spin left-1/2 top-1/2 z-0 h-[820px] w-[820px] -translate-x-1/2 -translate-y-1/2 text-rose/15" />
+        <Sparkle className="lmd-float left-[18%] top-[28%] z-0 h-6 w-6 text-rose/50" />
+        <Sparkle className="lmd-float right-[20%] bottom-[30%] z-0 h-4 w-4 text-wine/40" style={{ animationDelay: "1.2s" }} />
+        <div className="absolute inset-x-0 bottom-0 h-40 overflow-hidden">
+          <div className="lmd-wave flex h-full w-[200%]">
+            <Waves className="relative z-0 h-full w-1/2 text-rose/35" />
+            <Waves className="relative z-0 h-full w-1/2 text-rose/35" />
+          </div>
+        </div>
+      </motion.div>
 
       <motion.div
         className="absolute inset-0 flex flex-col items-center justify-center px-4"

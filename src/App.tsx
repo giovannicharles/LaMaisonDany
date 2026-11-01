@@ -28,7 +28,10 @@ const AdminFallback = (
 
 function AdminApp() {
   const [authed, setAuthed] = useState<boolean | null>(null);
-  const [selected, setSelected] = useState("dashboard");
+  const [selected, setSelected] = useState(() => {
+    const go = new URLSearchParams(window.location.search).get("go") ?? "";
+    return ["products", "categories", "content", "pages", "messages", "account"].includes(go) ? go : "dashboard";
+  });
   const [newMessages, setNewMessages] = useState(0);
 
   useEffect(() => {
@@ -52,11 +55,12 @@ function AdminApp() {
     setAuthed(false);
   };
 
+  const [section, sub] = selected.split(":");
   const renderContent = () => {
-    switch (selected) {
+    switch (section) {
       case "products": return <AdminProducts />;
       case "categories": return <AdminCategories />;
-      case "content": return <AdminContent />;
+      case "content": return <AdminContent key={sub} initialTab={sub} />;
       case "pages": return <AdminPages />;
       case "messages": return <AdminMessages />;
       case "account": return <AdminAccount />;

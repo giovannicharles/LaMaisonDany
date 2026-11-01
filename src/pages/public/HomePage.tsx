@@ -21,6 +21,7 @@ import Seo from "@/components/public/Seo";
 import { richLines } from "@/components/public/Rich";
 import { organizationLd } from "@/lib/seo";
 import { CreamJar, PerfumeBottle, WineBottle } from "@/components/art/Bottles";
+import { Arches, DotGrid, Rings, Sparkle, Sprig, Vine, Waves } from "@/components/art/Ornaments";
 
 const fadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 22 },
@@ -75,7 +76,12 @@ export default function HomePage() {
       <Seo path="/" jsonLd={organizationLd(site, window.location.origin)} />
 
       {/* Hero */}
-      <section ref={heroRef} className="relative overflow-hidden pt-[108px]">
+      <section ref={heroRef} className="relative isolate overflow-hidden pt-[108px]">
+        <Rings className="lmd-spin -left-40 top-24 h-[520px] w-[520px] text-rose/15" />
+        <Sprig className="-right-6 top-20 hidden h-[420px] rotate-12 text-wine/15 lg:block" />
+        <Sparkle className="lmd-float left-[8%] top-[34%] h-6 w-6 text-rose/50" />
+        <Sparkle className="lmd-float bottom-24 right-[44%] h-4 w-4 text-wine/40" style={{ animationDelay: "1.4s" }} />
+        <DotGrid className="bottom-10 left-6 h-28 w-28 text-wine/15" />
         <motion.div
           aria-hidden
           className="absolute -right-40 -top-40 h-[640px] w-[640px] rounded-full bg-blush-deep opacity-80 blur-3xl"
@@ -212,7 +218,9 @@ export default function HomePage() {
       <BrandMarquee />
 
       {/* Categories */}
-      <section className="mx-auto max-w-[1320px] px-5 pt-24 md:px-10 md:pt-32">
+      <section className="relative isolate mx-auto max-w-[1320px] px-5 pt-24 md:px-10 md:pt-32">
+        <Arches className="-right-10 top-16 hidden h-[360px] text-wine/10 md:block" />
+        <Sparkle className="lmd-float right-[12%] top-24 h-5 w-5 text-rose/40" />
         <h2 className="mb-10 font-brand text-4xl leading-[1.03] text-wine md:mb-14 md:text-6xl">
           <SplitLines onView lines={richLines(site.texts.home_categories_title, site.general.brand)} />
         </h2>
@@ -220,7 +228,9 @@ export default function HomePage() {
       </section>
 
       {/* Featured */}
-      <section className="mx-auto max-w-[1320px] px-5 py-24 md:px-10 md:py-32">
+      <section className="relative isolate mx-auto max-w-[1320px] px-5 py-24 md:px-10 md:py-32">
+        <Vine className="-left-14 top-10 hidden h-[300px] text-rose/20 xl:block" />
+        <DotGrid className="-right-4 bottom-20 hidden h-32 w-32 text-wine/10 md:block" />
         <div className="mb-12 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
           <h2 className="font-brand text-4xl leading-[1.03] text-wine md:text-6xl">
             <SplitLines onView lines={richLines(site.texts.home_featured_title, site.general.brand)} />
@@ -260,7 +270,9 @@ export default function HomePage() {
       <VideoReels />
 
       {/* About collage */}
-      <section className="bg-blush-deep/60">
+      <section className="relative isolate overflow-hidden bg-blush-deep/60">
+        <Rings className="lmd-spin -right-52 -top-40 h-[620px] w-[620px] text-wine/10" />
+        <Sprig className="-left-8 bottom-0 hidden h-[360px] -rotate-12 text-wine/15 lg:block" />
         <div className="mx-auto grid max-w-[1320px] items-center gap-14 px-5 py-24 md:px-10 md:py-32 lg:grid-cols-2 lg:gap-24">
           <motion.div
             className="relative mx-auto aspect-[1/1.02] w-full max-w-[520px]"
@@ -322,7 +334,9 @@ export default function HomePage() {
       </section>
 
       {/* How to order */}
-      <section className="mx-auto max-w-[1320px] px-5 py-24 md:px-10 md:py-32">
+      <section className="relative isolate mx-auto max-w-[1320px] px-5 py-24 md:px-10 md:py-32">
+        <Waves className="inset-x-0 top-1/3 h-24 w-full text-rose/20" />
+        <Sparkle className="lmd-float right-[6%] top-20 h-6 w-6 text-wine/40" />
         <h2 className="mb-10 font-brand text-4xl leading-[1.03] text-wine md:mb-14 md:text-6xl">
           <SplitLines onView lines={richLines(site.texts.home_howto_title, site.general.brand)} />
         </h2>
@@ -330,7 +344,7 @@ export default function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section className="mx-auto grid max-w-[1320px] gap-10 px-5 pb-24 md:px-10 md:pb-32 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+      <section className="relative isolate mx-auto grid max-w-[1320px] gap-10 px-5 pb-24 md:px-10 md:pb-32 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
         <div>
           <h2 className="font-brand text-4xl leading-[1.05] text-wine md:text-5xl">
             <SplitLines onView lines={richLines(site.texts.home_faq_title, site.general.brand)} />
@@ -343,7 +357,11 @@ export default function HomePage() {
       </section>
 
       {/* Final banner */}
-      <section ref={bannerRef} className="relative overflow-hidden bg-gradient-to-br from-wine to-wine-deep text-blush">
+      <section ref={bannerRef} className="relative isolate overflow-hidden bg-gradient-to-br from-wine to-wine-deep text-blush">
+        <Rings className="lmd-spin -left-40 -top-40 h-[560px] w-[560px] text-blush/10" />
+        <Rings className="lmd-spin -bottom-52 -right-40 h-[620px] w-[620px] text-blush/10" />
+        <Sparkle className="lmd-float left-[20%] top-16 h-6 w-6 text-blush/50" />
+        <Sparkle className="lmd-float bottom-20 right-[22%] h-4 w-4 text-blush/40" style={{ animationDelay: "1.2s" }} />
         {hasPhotos && (
           <>
             <motion.div

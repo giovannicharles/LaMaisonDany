@@ -12,6 +12,7 @@ import { ScrollReveal } from "@/components/public/ScrollReveal";
 import { optimizeImage } from "@/lib/images";
 import { pickPhotos, useShowcase } from "@/lib/showcase";
 import { CreamJar, PerfumeBottle, WineBottle } from "@/components/art/Bottles";
+import { Arches, DotGrid, Sparkle, Sprig } from "@/components/art/Ornaments";
 
 export default function AboutPage() {
   const site = useSite();
@@ -31,7 +32,9 @@ export default function AboutPage() {
       <Seo title="À propos" description={page?.content || site.about_home.text} path="/a-propos" />
       <PageHeader title={<Rich text={site.texts.about_title} />} />
 
-      <section className="max-w-[1320px] mx-auto px-5 md:px-10 py-20 md:py-28 grid lg:grid-cols-2 gap-14 lg:gap-24 items-center">
+      <section className="relative isolate max-w-[1320px] mx-auto px-5 md:px-10 py-20 md:py-28 grid lg:grid-cols-2 gap-14 lg:gap-24 items-center">
+        <Arches className="-left-16 top-10 hidden h-[340px] text-wine/10 xl:block" />
+        <Sparkle className="lmd-float right-[8%] top-16 h-5 w-5 text-rose/40" />
         <ScrollReveal>
           <div className="relative mx-auto max-w-[500px] aspect-square">
             {photos.length >= 6 ? (
@@ -80,7 +83,8 @@ export default function AboutPage() {
         </ScrollReveal>
       </section>
 
-      <section className="max-w-[1320px] mx-auto px-5 md:px-10 pb-20 md:pb-28">
+      <section className="relative isolate max-w-[1320px] mx-auto px-5 md:px-10 pb-20 md:pb-28">
+        <DotGrid className="-right-4 top-0 hidden h-28 w-28 text-wine/10 md:block" />
         <div className="grid gap-4 md:grid-cols-3 md:gap-6">
           {site.values.map((v, i) => (
             <ScrollReveal key={v.title} delay={i * 90}>
@@ -93,7 +97,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-blush-deep/60">
+      <section className="relative isolate overflow-hidden bg-blush-deep/60">
+        <Sprig className="-right-6 -top-8 hidden h-[320px] rotate-[200deg] text-wine/10 lg:block" />
         <div className="max-w-[1320px] mx-auto px-5 md:px-10 py-20 md:py-28 grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-20">
           <div>
             <h2 className="font-brand text-4xl md:text-5xl leading-[1.05] text-wine">

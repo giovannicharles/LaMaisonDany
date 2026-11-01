@@ -22,7 +22,7 @@
       ]
     },
     {
-      "source": "/site.webmanifest",
+      "source": "/(site|admin).webmanifest",
       "headers": [
         {
           "key": "Content-Type",

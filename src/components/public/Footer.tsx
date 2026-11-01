@@ -4,6 +4,7 @@ import { whatsappLink } from "@/api/client";
 import { useSite } from "@/lib/siteContent";
 import { usePwaInstall } from "@/lib/pwa";
 import WhatsAppIcon from "./WhatsAppIcon";
+import { Rings, Sparkle } from "@/components/art/Ornaments";
 
 export default function Footer() {
   const { general, texts } = useSite();
@@ -22,7 +23,9 @@ export default function Footer() {
   ].filter((i) => i.text);
 
   return (
-    <footer className="bg-wine-deep text-blush">
+    <footer className="relative isolate overflow-hidden bg-wine-deep text-blush">
+      <Rings className="lmd-spin -right-48 -top-48 h-[560px] w-[560px] text-blush/10" />
+      <Sparkle className="lmd-float right-[18%] top-16 h-5 w-5 text-blush/30" />
       <div className="max-w-[1320px] mx-auto px-5 md:px-10 pt-20 pb-10">
         <div className="grid gap-14 md:grid-cols-[1.3fr_0.7fr_1fr]">
           <div>

@@ -134,13 +134,14 @@
   width: 100%;
   border-radius: 1rem;
   border: 1.5px solid var(--color-blush-edge);
-  background: #fff9fa;
+  background: color-mix(in srgb, var(--color-blush) 40%, var(--color-white));
   padding: 0.9rem 1.1rem;
   color: var(--color-ink);
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 .lmd-field::placeholder {
-  color: #a5808a;
+  color: var(--color-ink-soft);
+  opacity: 0.7;
 }
 .lmd-field:hover {
   border-color: var(--color-rose);
@@ -166,8 +167,27 @@
 .lmd-rise { animation: lmd-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .lmd-float { animation: lmd-float 7s ease-in-out infinite; }
 .lmd-drift { animation: lmd-drift 38s linear infinite; }
+.lmd-wave { animation: lmd-wave 9s linear infinite; }
+.lmd-grid { animation: lmd-grid 6s linear infinite; }
+@keyframes lmd-wave { to { transform: translateX(-50%); } }
+@keyframes lmd-grid { to { transform: translate(48px, 48px); } }
+.lmd-spin { animation: lmd-spin 120s linear infinite; }
+@keyframes lmd-spin { to { transform: rotate(360deg); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .lmd-rise, .lmd-float, .lmd-drift { animation: none; }
+  .lmd-rise, .lmd-float, .lmd-drift, .lmd-spin, .lmd-wave, .lmd-grid { animation: none; }
   html { scroll-behavior: auto; }
+}
+
+html.lmd-dark {
+  --color-blush: #170b10;
+  --color-blush-deep: #28161d;
+  --color-blush-edge: #4a2d38;
+  --color-white: #22121a;
+  --color-wine: #f3c9d3;
+  --color-wine-deep: #0e0609;
+  --color-rose: #e0607f;
+  --color-ink: #f6e6ea;
+  --color-ink-soft: #c9a5b0;
+  color-scheme: dark;
 }

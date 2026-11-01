@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { api, whatsappLink } from "@/api/client";
 import type { Product } from "@/types";
 import BrandMarquee from "@/components/public/BrandMarquee";
@@ -14,6 +14,7 @@ import VideoReels from "@/components/public/VideoReels";
 import WhatsAppIcon from "@/components/public/WhatsAppIcon";
 import { ProductGridSkeleton } from "@/components/public/Skeleton";
 import CountUp from "@/components/public/CountUp";
+import { CircularText, HeroSpotlight, RotatingWords, ScrollCue } from "@/components/public/HeroExtras";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
 import { EASE } from "@/lib/motion";
 import { optimizeImage } from "@/lib/images";
@@ -55,6 +56,10 @@ export default function HomePage() {
   const hasPhotos = photos.length >= 3;
   const categoriesCount = new Set(showcase.map((p) => p.category_id).filter((c) => c != null)).size;
 
+  const heroWords = site.texts.hero_words.split("\n").map((w) => w.trim()).filter(Boolean);
+  const heroProof = site.texts.hero_proof.split("\n").map((w) => w.trim()).filter(Boolean);
+  const spotlight = featured.length >= 3 ? featured : showcase;
+
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const collageY = useTransform(heroScroll, [0, 1], [0, 60]);
@@ -95,19 +100,34 @@ export default function HomePage() {
 
         <div className="relative mx-auto grid min-h-[min(calc(100svh-72px),800px)] max-w-[1320px] items-center gap-10 px-5 py-10 md:px-10 md:py-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-6">
           <motion.div style={{ y: textY }}>
+            {site.texts.hero_eyebrow.trim() && (
+              <motion.p {...fadeUp(0)} className="mb-6 inline-flex items-center gap-2.5 rounded-full bg-white/80 px-4 py-2 text-sm font-medium text-wine shadow-sm ring-1 ring-blush-edge backdrop-blur">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                </span>
+                {site.texts.hero_eyebrow}
+              </motion.p>
+            )}
             <h1 className="font-brand text-[2.5rem] leading-[1] text-wine sm:text-6xl xl:text-[4.6rem]">
               <SplitLines
                 delay={0.15}
                 lines={[site.hero.line1, site.hero.line2, <span key="r" className="italic text-rose">{site.hero.accent}</span>]}
               />
             </h1>
-            <motion.p {...fadeUp(0.75)} className="mt-7 max-w-[46ch] text-lg leading-relaxed text-ink-soft">
+            {heroWords.length > 0 && (
+              <motion.p {...fadeUp(0.65)} className="mt-6 font-brand text-2xl text-wine sm:text-3xl">
+                {site.texts.hero_words_prefix} <RotatingWords words={heroWords} />
+              </motion.p>
+            )}
+            <motion.p {...fadeUp(0.75)} className="mt-5 max-w-[46ch] text-lg leading-relaxed text-ink-soft">
               {site.hero.text}
             </motion.p>
             <motion.div {...fadeUp(0.95)} className="mt-9 flex flex-col gap-3.5 sm:flex-row">
-              <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="lmd-btn lmd-btn-wine">
-                <WhatsAppIcon className="h-5 w-5" />
-                {site.hero.cta_primary}
+              <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="lmd-btn lmd-btn-wine group relative overflow-hidden !px-8 !py-4 text-[1.05rem] shadow-[0_18px_34px_-14px_rgba(107,23,48,0.7)]">
+                <span aria-hidden className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-white/25 transition-transform duration-700 group-hover:translate-x-[420%]" />
+                <WhatsAppIcon className="relative h-5 w-5" />
+                <span className="relative">{site.hero.cta_primary}</span>
               </a>
               <Link to="/catalogue" className="lmd-btn lmd-btn-ghost group">
                 {site.hero.cta_secondary}
@@ -115,8 +135,21 @@ export default function HomePage() {
               </Link>
             </motion.div>
 
+            {heroProof.length > 0 && (
+              <motion.ul {...fadeUp(1.05)} className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-soft">
+                {heroProof.map((t) => (
+                  <li key={t} className="flex items-center gap-2">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                      <Check className="h-3 w-3" strokeWidth={3} />
+                    </span>
+                    {t}
+                  </li>
+                ))}
+              </motion.ul>
+            )}
+
             {showcaseReady && showcase.length > 0 && (
-              <motion.dl {...fadeUp(1.15)} className="mt-10 flex gap-8 text-wine">
+              <motion.dl {...fadeUp(1.15)} className="mt-9 flex gap-8 border-t border-blush-edge/70 pt-6 text-wine">
                 <div>
                   <dt className="sr-only">Produits</dt>
                   <dd className="font-brand text-4xl leading-none"><CountUp to={showcase.length} /></dd>
@@ -165,10 +198,21 @@ export default function HomePage() {
                   animate={{ scale: 1, rotate: -8 }}
                   transition={{ type: "spring", stiffness: 160, damping: 11, delay: 1.4 }}
                 >
-                  <div className="flex h-[104px] w-[104px] flex-col items-center justify-center rounded-full bg-blush text-center text-wine shadow-[0_18px_34px_-14px_rgba(107,23,48,0.55)]">
+                  <div className="relative flex h-[120px] w-[120px] items-center justify-center">
+                    <CircularText text={site.texts.hero_badge_ring} className="absolute inset-0 h-full w-full text-rose/80 [animation-duration:24s]" />
+                  <div className="flex h-[88px] w-[88px] flex-col items-center justify-center rounded-full bg-blush text-center text-wine shadow-[0_18px_34px_-14px_rgba(107,23,48,0.55)]">
                     <span className="font-brand text-3xl italic leading-none">{site.hero.badge_title}</span>
-                    <span className="mt-1 text-[0.7rem] font-medium">{site.hero.badge_text}</span>
+                    <span className="mt-1 text-[0.62rem] font-medium leading-tight">{site.hero.badge_text}</span>
                   </div>
+                  </div>
+                </motion.div>
+                <motion.div
+                  className="absolute -bottom-4 left-1/2 z-10 -translate-x-[42%] sm:-translate-x-[36%]"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.9, delay: 1.6, ease: EASE }}
+                >
+                  <HeroSpotlight products={spotlight} />
                 </motion.div>
               </div>
             ) : (
@@ -184,7 +228,9 @@ export default function HomePage() {
             )}
           </motion.div>
         </div>
+        <ScrollCue label={site.texts.hero_scroll} />
       </section>
+      <div id="apres-hero" className="scroll-mt-20" />
 
       {/* Reassurance */}
       {o.show_reassurance && (

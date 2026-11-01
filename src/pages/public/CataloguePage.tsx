@@ -5,6 +5,7 @@ import { ArrowDownUp, Search, X } from "lucide-react";
 import { api, whatsappLink } from "@/api/client";
 import type { Product, Category } from "@/types";
 import { ProductGridSkeleton } from "@/components/public/Skeleton";
+import Pagination, { usePagination } from "@/components/ui/Pagination";
 import ProductCard from "@/components/public/ProductCard";
 import PageHeader from "@/components/public/PageHeader";
 import WhatsAppIcon from "@/components/public/WhatsAppIcon";
@@ -82,6 +83,8 @@ export default function CataloguePage() {
     }
     return list;
   }, [products, activeCategory, search, sort, site.options.hide_unavailable]);
+
+  const pg = usePagination(results, 12, `${activeCategory}|${search}|${sort}`);
 
   const filtered = Boolean(activeCategory || search.trim());
   const clearAll = () => {
@@ -164,6 +167,7 @@ export default function CataloguePage() {
           </div>
         </div>
 
+        <div id="boutique-liste" className="scroll-mt-28" />
         {!loading && !failed && (
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3" aria-live="polite">
             <p className="text-ink-soft">
@@ -210,7 +214,7 @@ export default function CataloguePage() {
         ) : (
           <motion.ul layout className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 xl:grid-cols-4">
             <AnimatePresence mode="popLayout" initial={false}>
-              {results.map((p, i) => (
+              {pg.slice.map((p, i) => (
                 <motion.li
                   key={p.id}
                   layout
@@ -225,6 +229,9 @@ export default function CataloguePage() {
               ))}
             </AnimatePresence>
           </motion.ul>
+        )}
+        {!loading && !failed && results.length > 0 && (
+          <Pagination page={pg.page} pageCount={pg.pageCount} total={pg.total} size={pg.size} label="produits" onChange={(n) => { pg.setPage(n); document.getElementById("boutique-liste")?.scrollIntoView({ behavior: "smooth", block: "start" }); }} />
         )}
       </div>
     </div>

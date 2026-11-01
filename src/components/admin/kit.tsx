@@ -101,14 +101,22 @@ export function Modal({
   onClose,
   children,
   wide,
+  dirty,
 }: {
   title: string;
   onClose: () => void;
   children: ReactNode;
   wide?: boolean;
+  dirty?: boolean;
 }) {
+  const { confirm } = useFeedback();
+  const requestClose = useCallback(async () => {
+    if (dirty && !(await confirm("Annuler les modifications en cours ? Elles seront perdues.", "Quitter sans enregistrer"))) return;
+    onClose();
+  }, [dirty, confirm, onClose]);
+
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && void requestClose();
     window.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -116,7 +124,7 @@ export function Modal({
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
-  }, [onClose]);
+  }, [requestClose]);
 
   return (
     <motion.div
@@ -125,7 +133,7 @@ export function Modal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <button aria-label="Fermer" className="absolute inset-0 bg-wine-deep/50" onClick={onClose} />
+      <button aria-label="Fermer" className="absolute inset-0 bg-wine-deep/50" onClick={() => void requestClose()} />
       <motion.div
         role="dialog"
         aria-modal="true"
@@ -141,7 +149,7 @@ export function Modal({
       >
         <header className="flex items-center justify-between border-b border-blush-edge/70 px-6 py-4">
           <h2 className="font-brand text-2xl text-wine">{title}</h2>
-          <button onClick={onClose} aria-label="Fermer" className="rounded-full p-2 text-wine hover:bg-blush-deep">
+          <button onClick={() => void requestClose()} aria-label="Fermer" className="rounded-full p-2 text-wine hover:bg-blush-deep">
             <X className="h-5 w-5" />
           </button>
         </header>

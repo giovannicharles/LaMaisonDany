@@ -58,7 +58,7 @@ export default function InstallPrompt() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 40, scale: 0.97 }}
           transition={{ duration: 0.5, ease: EASE }}
-          className="lmd fixed inset-x-4 bottom-4 z-[75] mx-auto max-w-md rounded-[1.5rem] bg-white p-5 shadow-[0_30px_70px_-25px_rgba(74,15,34,0.6)] ring-1 ring-blush-edge sm:bottom-6"
+          className="lmd fixed inset-x-4 bottom-4 z-[75] mx-auto max-w-md rounded-[1.5rem] bg-white p-5 sm:inset-x-auto sm:left-5 sm:mx-0 sm:max-w-sm shadow-[0_30px_70px_-25px_rgba(74,15,34,0.6)] ring-1 ring-blush-edge sm:bottom-6"
         >
           <button onClick={dismiss} aria-label={texts.install_prompt_later} className="absolute right-3 top-3 rounded-full p-2 text-ink-soft transition-colors hover:bg-blush-deep hover:text-wine">
             <X className="h-4 w-4" />

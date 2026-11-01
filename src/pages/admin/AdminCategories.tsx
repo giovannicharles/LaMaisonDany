@@ -65,12 +65,12 @@ export default function AdminCategories() {
     const count = Number(c.product_count ?? 0);
     const msg =
       count > 0
-        ? `Supprimer « ${c.name} » ? Ses ${count} produit(s) seront conservés mais sans catégorie.`
-        : `Supprimer la catégorie « ${c.name} » ?`;
+        ? `Supprimer « ${c.name} » ? Elle sera placée dans la corbeille ; ses ${count} produit(s) n'auront plus de catégorie tant qu'elle n'est pas restaurée.`
+        : `Supprimer la catégorie « ${c.name} » ? Elle sera placée dans la corbeille.`;
     if (!(await confirm(msg))) return;
     try {
       await api.categories.delete(c.id);
-      toast("success", "Catégorie supprimée.");
+      toast("success", "Catégorie placée dans la corbeille.");
       load();
     } catch {
       toast("error", "Suppression impossible.");

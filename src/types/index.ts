@@ -44,6 +44,40 @@ export interface Message {
   product_id: number | null;
   status: MessageStatus;
   created_at: string;
+  admin_note?: string | null;
+  read_at?: string | null;
+  product_name?: string | null;
+  product_slug?: string | null;
+}
+
+export interface Contact {
+  key: string;
+  name: string;
+  phone: string;
+  email: string;
+  last_at: string;
+  count: number;
+}
+
+export interface Broadcast {
+  id: number;
+  channel: "push" | "whatsapp";
+  title: string | null;
+  body: string;
+  url: string | null;
+  recipients: number;
+  sent: number;
+  failed: number;
+  created_at: string;
+}
+
+export interface MessageCounts {
+  new: number;
+  read: number;
+  responded: number;
+  archived: number;
+  total: number;
+  trash: number;
 }
 
 export interface Admin {

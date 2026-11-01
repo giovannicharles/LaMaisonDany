@@ -4,7 +4,7 @@
  * - Photos : affichées tout de suite depuis le cache, rafraîchies en arrière-plan.
  * - Jamais mis en cache : admin (requêtes avec jeton), messages, statistiques, envois.
  * Changez VERSION pour forcer le renouvellement de tous les caches. */
-const VERSION = "v2";
+const VERSION = "v3";
 const SHELL = `lmd-shell-${VERSION}`;
 const STATIC = `lmd-static-${VERSION}`;
 const IMAGES = `lmd-images-${VERSION}`;
@@ -73,22 +73,20 @@ function withTimeout(promise, ms) {
   });
 }
 
-// Pages : on sert la coquille du site tout de suite et on la renouvelle en arrière-plan.
+// Pages : le réseau d'abord (pour toujours charger les fichiers de la dernière version), la coquille en cache si le réseau est lent ou coupé.
 async function handleNavigation(event) {
   const cache = await caches.open(SHELL);
-  const cached = await cache.match("/");
-  const refresh = fetch("/", { cache: "no-store" })
-    .then((res) => {
-      if (res.ok) cache.put("/", res.clone());
+  try {
+    const res = await withTimeout(fetch("/", { cache: "no-store" }), 3500);
+    if (res.ok) {
+      event.waitUntil(cache.put("/", res.clone()));
       return res;
-    })
-    .catch(() => null);
-  if (cached) {
-    event.waitUntil(refresh);
-    return cached;
+    }
+  } catch {
+    /* réseau lent ou coupé : on retombe sur le cache */
   }
-  const fresh = await refresh;
-  if (fresh) return fresh;
+  const cached = await cache.match("/");
+  if (cached) return cached;
   return (await caches.match("/offline.html")) || new Response("Hors connexion", { status: 503 });
 }
 
@@ -96,9 +94,15 @@ async function cacheFirst(request, cacheName) {
   const cache = await caches.open(cacheName);
   const hit = await cache.match(request);
   if (hit) return hit;
-  const res = await fetch(request);
-  if (res.ok) cache.put(request, res.clone());
-  return res;
+  try {
+    const res = await fetch(request);
+    const type = res.headers.get("content-type") || "";
+    // Un fichier introuvable renvoyé sous forme de page HTML ne doit jamais être mis en cache ni servi comme script.
+    if (res.ok && !(request.destination !== "document" && type.includes("text/html"))) cache.put(request, res.clone());
+    return res;
+  } catch {
+    return Response.error();
+  }
 }
 
 async function staleWhileRevalidate(event, request, cacheName, max) {
@@ -165,4 +169,42 @@ self.addEventListener("fetch", (event) => {
       event.respondWith(cacheFirst(request, STATIC));
     }
   }
+});
+
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    data = { body: event.data ? event.data.text() : "" };
+  }
+  const title = data.title || "LaMaison Dany";
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: data.body || "",
+      icon: "/icon-192.png",
+      badge: "/icon-192.png",
+      tag: data.tag || undefined,
+      renotify: Boolean(data.tag),
+      data: { url: data.url || "/" },
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = new URL((event.notification.data && event.notification.data.url) || "/", self.location.origin).href;
+  event.waitUntil(
+    (async () => {
+      const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      for (const w of windows) {
+        if (w.url.startsWith(self.location.origin)) {
+          await w.focus();
+          if ("navigate" in w) await w.navigate(target).catch(() => {});
+          return;
+        }
+      }
+      await self.clients.openWindow(target);
+    })()
+  );
 });

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/api/client";
 import { AButton, Field, PageIntro, Panel, TextInput, useFeedback } from "@/components/admin/kit";
+import PushPanel from "@/components/admin/PushPanel";
 
 export default function AdminAccount() {
   const { toast } = useFeedback();
@@ -99,6 +100,10 @@ export default function AdminAccount() {
             </div>
           </form>
         </Panel>
+
+        <div className="lg:col-span-2">
+          <PushPanel />
+        </div>
       </div>
     </>
   );

@@ -9,6 +9,7 @@ import {
   Hash,
   LayoutDashboard,
   LogOut,
+  Megaphone,
   Menu,
   MessageSquare,
   Moon,
@@ -19,13 +20,14 @@ import {
   Search,
   Sun,
   Tags,
+  Trash2,
   UserRound,
   X,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePwaInstall } from "@/lib/pwa";
-import { FeedbackProvider } from "./kit";
+import { FeedbackProvider, useFeedback } from "./kit";
 
 export type NavItemData = {
   id: string;
@@ -62,6 +64,7 @@ function buildGroups(newMessages: number): NavGroupData[] {
         { id: "search", title: "Rechercher", icon: Search, shortcut: "Ctrl K" },
         { id: "dashboard", title: "Tableau de bord", icon: LayoutDashboard },
         { id: "messages", title: "Messages", icon: MessageSquare, badge: newMessages > 0 ? newMessages : undefined },
+        { id: "broadcast", title: "Messages groupés", icon: Megaphone },
       ],
     },
     {
@@ -86,7 +89,10 @@ function buildGroups(newMessages: number): NavGroupData[] {
   ];
 }
 
-const BOTTOM_ITEMS: NavItemData[] = [{ id: "account", title: "Mon compte", icon: UserRound }];
+const BOTTOM_ITEMS: NavItemData[] = [
+  { id: "trash", title: "Corbeille", icon: Trash2 },
+  { id: "account", title: "Mon compte", icon: UserRound },
+];
 
 const flatten = (items: NavItemData[]): NavItemData[] =>
   items.reduce<NavItemData[]>((acc, item) => {
@@ -374,7 +380,11 @@ interface AdminLayoutProps {
 
 const THEME_KEY = "lmd_admin_theme";
 
-export default function AdminLayout({ selected, setSelected, onLogout, newMessages, children }: AdminLayoutProps) {
+function AdminShell({ selected, setSelected, onLogout: logoutNow, newMessages, children }: AdminLayoutProps) {
+  const { confirm } = useFeedback();
+  const onLogout = async () => {
+    if (await confirm("Voulez-vous vous déconnecter ?", "Se déconnecter")) logoutNow();
+  };
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
     try { return localStorage.getItem("lmd_admin_collapsed") === "1"; } catch { return false; }
@@ -432,7 +442,7 @@ export default function AdminLayout({ selected, setSelected, onLogout, newMessag
   ];
 
   return (
-    <FeedbackProvider>
+    <>
       <div className="lmd flex min-h-screen w-full bg-blush text-ink">
         <aside
           className={cn(
@@ -515,6 +525,14 @@ export default function AdminLayout({ selected, setSelected, onLogout, newMessag
 
         {searchOpen && <CommandPalette items={all} extra={extra} onPick={select} onClose={() => setSearchOpen(false)} />}
       </div>
+    </>
+  );
+}
+
+export default function AdminLayout(props: AdminLayoutProps) {
+  return (
+    <FeedbackProvider>
+      <AdminShell {...props} />
     </FeedbackProvider>
   );
 }

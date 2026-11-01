@@ -83,6 +83,7 @@ export interface SiteOptions {
   show_floating_whatsapp: boolean;
   show_prices: boolean;
   show_install_button: boolean;
+  show_visitor_push: boolean;
   show_contact_form: boolean;
   default_sort: "default" | "price-asc" | "price-desc" | "name";
   hide_unavailable: boolean;
@@ -141,6 +142,26 @@ export const TEXT_FIELDS: TextField[] = [
   { key: "install_prompt_ios_hint", group: "Installation de l'application", label: "Consigne sur iPhone", value: "Touchez Partager, puis « Sur l'écran d'accueil »." },
   { key: "install_prompt_button", group: "Installation de l'application", label: "Bouton d'installation", value: "Installer" },
   { key: "install_prompt_later", group: "Installation de l'application", label: "Bouton « plus tard »", value: "Plus tard" },
+  { key: "footer_push_button", group: "Pied de page", label: "Bouton d'abonnement aux notifications", value: "Recevoir nos nouveautés" },
+  { key: "footer_push_on", group: "Pied de page", label: "Texte quand les notifications sont actives", value: "Notifications activées" },
+  { key: "footer_push_off", group: "Pied de page", label: "Lien pour se désabonner", value: "Se désabonner" },
+  { key: "footer_push_confirm", group: "Pied de page", label: "Question de confirmation du désabonnement", value: "Ne plus recevoir nos notifications ?" },
+  { key: "hero_eyebrow", group: "Accueil : en-tête", label: "Pastille au-dessus du titre", value: "Disponible maintenant sur WhatsApp" },
+  { key: "hero_words_prefix", group: "Accueil : en-tête", label: "Début de la phrase qui change", value: "Le choix idéal" },
+  { key: "hero_words", group: "Accueil : en-tête", label: "Mots qui défilent (un par ligne)", long: true, value: "pour elle\npour lui\npour offrir\npour vous faire plaisir" },
+  { key: "hero_proof", group: "Accueil : en-tête", label: "Points de confiance sous les boutons (un par ligne)", long: true, value: "Réponse rapide sur WhatsApp\nConseil personnalisé\nAucun paiement en ligne" },
+  { key: "hero_badge_ring", group: "Accueil : en-tête", label: "Texte qui tourne autour du badge", value: "Sélection premium" },
+  { key: "hero_scroll", group: "Accueil : en-tête", label: "Invitation à descendre", value: "Découvrir" },
+  { key: "credit_phone", group: "Réalisation du site", label: "Numéro du développeur", value: "676101942" },
+  { key: "credit_email", group: "Réalisation du site", label: "Email du développeur", value: "ebodegiovanni@gmail.com" },
+  { key: "credit_contact_title", group: "Réalisation du site", label: "Titre de la fenêtre de contact", value: "Un projet de site ou d'application ?" },
+  { key: "credit_contact_text", group: "Réalisation du site", label: "Texte de la fenêtre de contact", long: true, value: "Choisissez comment échanger avec Giovanni Charles E. : nous vous redirigeons directement." },
+  { key: "credit_message", group: "Réalisation du site", label: "Message prérempli", long: true, value: "Bonjour Giovanni, je vous contacte depuis le site LaMaison Dany." },
+  { key: "credit_mail_subject", group: "Réalisation du site", label: "Objet de l'email", value: "Contact depuis le site LaMaison Dany" },
+  { key: "credit_choice_whatsapp", group: "Réalisation du site", label: "Libellé : WhatsApp", value: "Écrire sur WhatsApp" },
+  { key: "credit_choice_call", group: "Réalisation du site", label: "Libellé : appel", value: "Appeler" },
+  { key: "credit_choice_email", group: "Réalisation du site", label: "Libellé : email", value: "Envoyer un email" },
+  { key: "credit_close", group: "Réalisation du site", label: "Libellé : fermer", value: "Fermer" },
   { key: "loader_tagline", group: "Écran de chargement", label: "Phrase sous le nom", value: "Parfums, cosmétiques, vins & plus" },
   { key: "brands_list", group: "Accueil", label: "Marques affichées en défilement", hint: "Séparées par des virgules. Laissez vide pour masquer la bande.", long: true, value: "J.P. Chenet, Jean Paul Gaultier, Mauboussin, Diana Castel, Jacques Saint Pres, Mixa, Le Petit Marseillais, Cadum, Yves Rocher, Byphasse, Lacura, Femfresh, Brut, Carré Homme" },
   { key: "videos_title", group: "Accueil", label: "Titre de la section vidéos", value: "Nos produits *en vidéo*" },
@@ -208,6 +229,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     show_floating_whatsapp: true,
     show_prices: true,
     show_install_button: true,
+    show_visitor_push: true,
     show_contact_form: true,
     default_sort: "default",
     hide_unavailable: false,

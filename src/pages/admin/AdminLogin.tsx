@@ -42,6 +42,11 @@ export default function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
   const googleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    void import("@/components/admin/AdminLayout");
+    void import("@/pages/admin/AdminDashboard");
+  }, []);
+
+  useEffect(() => {
     api.auth.config().then((r) => setGoogleId(r.data.google_client_id || "")).catch(() => {});
   }, []);
 

@@ -1,53 +1,77 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { lazy, Suspense, useState, useEffect } from "react";
+import { Suspense, useCallback, useState, useEffect } from "react";
+import { lazyRetry } from "@/lib/lazyRetry";
 import PublicLayout from "@/components/public/PublicLayout";
 import HomePage from "@/pages/public/HomePage";
 import CataloguePage from "@/pages/public/CataloguePage";
 import ProductDetailPage from "@/pages/public/ProductDetailPage";
 import AboutPage from "@/pages/public/AboutPage";
 import ContactPage from "@/pages/public/ContactPage";
-import { api } from "@/api/client";
+import { ApiError, api } from "@/api/client";
 import { SiteProvider } from "@/lib/siteContent";
 import Seo from "@/components/public/Seo";
 
-const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
-const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
-const AdminProducts = lazy(() => import("@/pages/admin/AdminProducts"));
-const AdminCategories = lazy(() => import("@/pages/admin/AdminCategories"));
-const AdminPages = lazy(() => import("@/pages/admin/AdminPages"));
-const AdminMessages = lazy(() => import("@/pages/admin/AdminMessages"));
-const AdminAccount = lazy(() => import("@/pages/admin/AdminAccount"));
-const AdminContent = lazy(() => import("@/pages/admin/AdminContent"));
-const AdminLayout = lazy(() => import("@/components/admin/AdminLayout"));
+const AdminLogin = lazyRetry(() => import("@/pages/admin/AdminLogin"));
+const AdminDashboard = lazyRetry(() => import("@/pages/admin/AdminDashboard"));
+const AdminProducts = lazyRetry(() => import("@/pages/admin/AdminProducts"));
+const AdminCategories = lazyRetry(() => import("@/pages/admin/AdminCategories"));
+const AdminPages = lazyRetry(() => import("@/pages/admin/AdminPages"));
+const AdminMessages = lazyRetry(() => import("@/pages/admin/AdminMessages"));
+const AdminAccount = lazyRetry(() => import("@/pages/admin/AdminAccount"));
+const AdminContent = lazyRetry(() => import("@/pages/admin/AdminContent"));
+const AdminBroadcast = lazyRetry(() => import("@/pages/admin/AdminBroadcast"));
+const AdminTrash = lazyRetry(() => import("@/pages/admin/AdminTrash"));
+const AdminLayout = lazyRetry(() => import("@/components/admin/AdminLayout"));
 
 const AdminFallback = (
-  <div className="lmd min-h-screen flex items-center justify-center bg-blush">
-    <p className="text-ink-soft">Chargement...</p>
+  <div className="lmd flex min-h-screen bg-blush" role="status" aria-label="Chargement">
+    <div className="hidden w-[260px] shrink-0 space-y-3 border-r border-blush-edge/70 bg-white/60 p-4 lg:block">
+      <div className="lmd-skel h-10 rounded-lg" />
+      {Array.from({ length: 7 }, (_, i) => (
+        <div key={i} className="lmd-skel h-8 rounded-md" />
+      ))}
+    </div>
+    <div className="flex-1">
+      <div className="h-14 border-b border-blush-edge/70" />
+      <div className="mx-auto max-w-[1100px] space-y-5 px-4 py-10 md:px-8">
+        <div className="lmd-skel h-10 w-1/3 rounded-xl" />
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {Array.from({ length: 4 }, (_, i) => (
+            <div key={i} className="lmd-skel h-36 rounded-2xl" />
+          ))}
+        </div>
+        <div className="lmd-skel h-64 rounded-2xl" />
+      </div>
+    </div>
   </div>
 );
 
 function AdminApp() {
-  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [authed, setAuthed] = useState<boolean>(() => Boolean(localStorage.getItem("lmd_token")));
   const [selected, setSelected] = useState(() => {
     const go = new URLSearchParams(window.location.search).get("go") ?? "";
-    return ["products", "categories", "content", "pages", "messages", "account"].includes(go) ? go : "dashboard";
+    return ["products", "categories", "content", "pages", "messages", "broadcast", "trash", "account"].includes(go) ? go : "dashboard";
   });
   const [newMessages, setNewMessages] = useState(0);
 
   useEffect(() => {
-    const token = localStorage.getItem("lmd_token");
-    if (!token) { setAuthed(false); return; }
-    api.auth.me().then(() => setAuthed(true)).catch(() => { localStorage.removeItem("lmd_token"); setAuthed(false); });
+    if (!authed) return;
+    api.auth.me().catch((err: unknown) => {
+      if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+        localStorage.removeItem("lmd_token");
+        setAuthed(false);
+      }
+    });
+  }, [authed]);
+
+  const refreshMessages = useCallback(() => {
+    api.messages.counts().then((res) => setNewMessages(res.data.new)).catch(() => {});
   }, []);
 
   useEffect(() => {
-    if (!authed) return;
-    api.messages.list("new").then((res) => setNewMessages(res.data.length)).catch(() => {});
-  }, [authed, selected]);
+    if (authed) refreshMessages();
+  }, [authed, selected, refreshMessages]);
 
-  if (authed === null) {
-    return <main className="lmd min-h-screen flex items-center justify-center bg-blush"><p className="text-ink-soft">Chargement...</p></main>;
-  }
   if (!authed) return <><Seo title="Administration" noindex /><AdminLogin onSuccess={() => setAuthed(true)} /></>;
 
   const handleLogout = () => {
@@ -62,7 +86,9 @@ function AdminApp() {
       case "categories": return <AdminCategories />;
       case "content": return <AdminContent key={sub} initialTab={sub} />;
       case "pages": return <AdminPages />;
-      case "messages": return <AdminMessages />;
+      case "messages": return <AdminMessages goTo={setSelected} onChanged={refreshMessages} />;
+      case "broadcast": return <AdminBroadcast />;
+      case "trash": return <AdminTrash onChanged={refreshMessages} />;
       case "account": return <AdminAccount />;
       default: return <AdminDashboard goTo={setSelected} />;
     }

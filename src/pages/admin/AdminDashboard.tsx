@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, CheckCircle2, Circle, Eye, ImageOff, MessageCircleQuestion, MessageSquare, Package, Tags } from "lucide-react";
 import { api, type Stats } from "@/api/client";
 import type { Category, Message, Product } from "@/types";
-import { PageIntro, Panel } from "@/components/admin/kit";
+import { AButton, PageIntro, Panel } from "@/components/admin/kit";
+import { usePush } from "@/lib/push";
 import WhatsAppIcon from "@/components/public/WhatsAppIcon";
 import { optimizeImage } from "@/lib/images";
 import { cn } from "@/lib/utils";
@@ -32,11 +33,15 @@ export default function AdminDashboard({ goTo }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [whatsappSet, setWhatsappSet] = useState(false);
+  const [ready, setReady] = useState(false);
+  const push = usePush("admin");
 
   useEffect(() => {
-    api.products.list().then((r) => setProducts(r.data)).catch(() => {});
-    api.categories.list().then((r) => setCategories(r.data)).catch(() => {});
-    api.messages.list().then((r) => setMessages(r.data)).catch(() => {});
+    Promise.allSettled([
+      api.products.list().then((r) => setProducts(r.data)),
+      api.categories.list().then((r) => setCategories(r.data)),
+      api.messages.list().then((r) => setMessages(r.data)),
+    ]).finally(() => setReady(true));
     api.stats.get(30).then((r) => setStats(r.data)).catch(() => {});
     api.settings
       .get()
@@ -79,6 +84,15 @@ export default function AdminDashboard({ goTo }: Props) {
     <>
       <PageIntro title="Tableau de bord" text="Un coup d'œil sur votre boutique et ce qu'il reste à faire." />
 
+      {push.state === "off" && (
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-wine px-5 py-4 text-blush">
+          <p className="max-w-[60ch] text-[0.95rem]">Activez les notifications pour être prévenu dès qu'un client vous écrit, même quand l'administration est fermée.</p>
+          <AButton variant="secondary" onClick={push.enable}>
+            Activer les notifications
+          </AButton>
+        </div>
+      )}
+
       <ul className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {cards.map(({ label, value, icon: Icon, go, warn }) => (
           <li key={label}>
@@ -89,7 +103,7 @@ export default function AdminDashboard({ goTo }: Props) {
               <span className={cn("flex h-10 w-10 items-center justify-center rounded-full", warn ? "bg-amber-100 text-amber-800" : "bg-blush-deep text-wine")}>
                 <Icon className="h-5 w-5" />
               </span>
-              <p className="mt-4 text-4xl font-semibold tabular-nums text-wine">{value}</p>
+              <p className="mt-4 text-4xl font-semibold tabular-nums text-wine">{ready ? value : <span className="lmd-skel inline-block h-10 w-16 rounded-lg" />}</p>
               <p className="text-sm text-ink-soft">{label}</p>
             </button>
           </li>

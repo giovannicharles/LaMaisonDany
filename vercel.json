@@ -15,7 +15,7 @@
       "destination": "https://lmd-api-qixr.onrender.com/robots.txt"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/|fonts/|products/|videos/).*)",
       "destination": "/index.html"
     }
   ],

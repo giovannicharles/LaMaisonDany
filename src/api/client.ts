@@ -3,6 +3,9 @@ import type {
   Category,
   Page,
   Message,
+  MessageCounts,
+  Broadcast,
+  Contact,
   MessageStatus,
   AuthResponse,
   Admin,
@@ -223,8 +226,19 @@ export const api = {
     delete: (id: number) => api.delete<{ deleted: boolean }>(`/pages/${id}`),
   },
   messages: {
-    list: (status?: MessageStatus) =>
-      api.get<Message[]>(`/messages${status ? `?status=${status}` : ""}`),
+    list: (status?: MessageStatus, opts: { q?: string; trash?: boolean } = {}) => {
+      const p = new URLSearchParams();
+      if (status) p.set("status", status);
+      if (opts.q) p.set("q", opts.q);
+      if (opts.trash) p.set("trash", "1");
+      const qs = p.toString();
+      return api.get<Message[]>(`/messages${qs ? `?${qs}` : ""}`);
+    },
+    counts: () => api.get<MessageCounts>("/messages/counts"),
+    update: (id: number, data: { status?: MessageStatus; admin_note?: string }) => api.patch<Message>(`/messages/${id}`, data),
+    bulk: (ids: number[], action: "read" | "responded" | "archive" | "delete" | "restore") =>
+      api.post<{ updated: number }>("/messages/bulk", { ids, action }),
+    restore: (id: number) => api.post<{ restored: boolean }>(`/messages/${id}/restore`),
     create: (data: {
       name: string;
       phone?: string;
@@ -248,6 +262,37 @@ export const api = {
       return api.post<MediaResponse>("/media/upload", fd);
     },
   },
+  push: {
+    key: () => request<ApiResponse<{ enabled: boolean; public_key: string }>>("/push/key"),
+    subscribe: (subscription: PushSubscriptionJSON, audience: "admin" | "visitor") =>
+      request<ApiResponse<{ subscribed: boolean }>>("/push/subscribe", { method: "POST", body: JSON.stringify({ subscription, audience }) }),
+    unsubscribe: (endpoint: string) =>
+      request<ApiResponse<{ unsubscribed: boolean }>>("/push/unsubscribe", { method: "POST", body: JSON.stringify({ endpoint }) }),
+    test: () => api.post<{ sent: number; failed: number }>("/push/test"),
+    stats: () => api.get<{ admins: number; visitors: number; enabled: boolean }>("/push/stats"),
+  },
+
+  broadcasts: {
+    list: () => api.get<Broadcast[]>("/broadcasts"),
+    contacts: () => api.get<Contact[]>("/broadcasts/contacts"),
+    create: (data: { channel: "push" | "whatsapp"; title?: string; body: string; url?: string; recipients?: number }) =>
+      api.post<Broadcast>("/broadcasts", data),
+    delete: (id: number) => api.delete<{ deleted: boolean }>(`/broadcasts/${id}`),
+  },
+
+  trash: {
+    list: () =>
+      api.get<{
+        products: { id: number; name: string; deleted_at: string }[];
+        categories: { id: number; name: string; deleted_at: string }[];
+        messages: { id: number; name: string; message: string | null; deleted_at: string }[];
+        broadcasts: { id: number; title: string | null; body: string; deleted_at: string }[];
+        pages: { id: number; title: string; deleted_at: string }[];
+      }>("/trash"),
+    restore: (type: string, id: number) => api.post<{ restored: boolean }>(`/trash/${type}/${id}/restore`),
+    purge: (type: string, id: number) => api.delete<{ purged: boolean }>(`/trash/${type}/${id}`),
+  },
+
   chat: {
     send: (messages: { role: "user" | "assistant"; content: string }[]) =>
       request<ApiResponse<{ reply: string; product_slugs: string[]; handoff: boolean }>>("/chat", {

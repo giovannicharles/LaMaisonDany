@@ -345,6 +345,7 @@ export default function AdminContent({ initialTab }: { initialTab?: string }) {
                 <Toggle label="Bouton WhatsApp flottant" checked={o.show_floating_whatsapp} onChange={(v) => set("options", { show_floating_whatsapp: v })} />
                 <Toggle label="Afficher les prix" checked={o.show_prices} onChange={(v) => set("options", { show_prices: v })} />
                 <Toggle label="Bouton « Installer l'application »" checked={o.show_install_button} onChange={(v) => set("options", { show_install_button: v })} />
+                <Toggle label="Invitation aux notifications (pied de page)" checked={o.show_visitor_push} onChange={(v) => set("options", { show_visitor_push: v })} />
                 <Toggle label="Formulaire de contact" checked={o.show_contact_form} onChange={(v) => set("options", { show_contact_form: v })} />
               </div>
               <p className="-mt-2 text-sm text-ink-soft">L'assistant (chatbot) se règle dans l'onglet Chatbot, la barre du haut dans Titres et textes.</p>

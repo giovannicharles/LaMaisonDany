@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowUp, Copy, ImagePlus, ListOrdered, Pencil, Plus, Search, Star, Trash2 } from "lucide-react";
 import { api } from "@/api/client";
+import Pagination, { usePagination } from "@/components/ui/Pagination";
 import type { Category, Product } from "@/types";
 import { artKindFor, ProductArt } from "@/components/art/Bottles";
 import { AButton, Field, Modal, PageIntro, Panel, Select, TextArea, TextInput, Toggle, useFeedback } from "@/components/admin/kit";
@@ -44,6 +45,11 @@ export default function AdminProducts() {
   const [saving, setSaving] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [reordering, setReordering] = useState(false);
+  const baseline = useRef("");
+  useEffect(() => {
+    if (showForm) baseline.current = JSON.stringify(form);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showForm]);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const load = useCallback(() => {
@@ -177,10 +183,10 @@ export default function AdminProducts() {
   };
 
   const remove = async (p: Product) => {
-    if (!(await confirm(`Supprimer « ${p.name} » ? Cette action est définitive.`))) return;
+    if (!(await confirm(`Supprimer « ${p.name} » ? Il sera placé dans la corbeille, vous pourrez le restaurer.`))) return;
     try {
       await api.products.delete(p.id);
-      toast("success", "Produit supprimé.");
+      toast("success", "Produit placé dans la corbeille.");
       load();
     } catch {
       toast("error", "Suppression impossible.");
@@ -195,6 +201,8 @@ export default function AdminProducts() {
       toast("error", "Modification impossible.");
     }
   };
+
+  const pg = usePagination(visible, 10, `${search}|${filter}`);
 
   return (
     <>
@@ -259,9 +267,10 @@ export default function AdminProducts() {
           )}
         </Panel>
       ) : (
+        <>
         <ul className="space-y-3">
-          {visible.map((p, index) => (
-            <li key={p.id} className="flex items-center gap-4 rounded-2xl bg-white p-3 pr-4 ring-1 ring-blush-edge/70">
+          {pg.slice.map((p, i) => (
+            <motion.li key={p.id} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} className="flex items-center gap-4 rounded-2xl bg-white p-3 pr-4 ring-1 ring-blush-edge/70">
               <div className="flex h-20 w-20 shrink-0 items-end justify-center overflow-hidden rounded-xl bg-blush-deep">
                 {p.image_url ? (
                   <img src={optimizeImage(p.image_url, 200)} alt="" className="h-full w-full object-cover" />
@@ -281,10 +290,10 @@ export default function AdminProducts() {
               </div>
               {reordering ? (
                 <>
-                  <button onClick={() => move(index, -1)} disabled={index === 0} aria-label={`Monter ${p.name}`} className="rounded-full p-2.5 text-wine hover:bg-blush-deep disabled:opacity-30">
+                  <button onClick={() => move((pg.offset + i), -1)} disabled={(pg.offset + i) === 0} aria-label={`Monter ${p.name}`} className="rounded-full p-2.5 text-wine hover:bg-blush-deep disabled:opacity-30">
                     <ArrowUp className="h-5 w-5" />
                   </button>
-                  <button onClick={() => move(index, 1)} disabled={index === visible.length - 1} aria-label={`Descendre ${p.name}`} className="rounded-full p-2.5 text-wine hover:bg-blush-deep disabled:opacity-30">
+                  <button onClick={() => move((pg.offset + i), 1)} disabled={(pg.offset + i) === visible.length - 1} aria-label={`Descendre ${p.name}`} className="rounded-full p-2.5 text-wine hover:bg-blush-deep disabled:opacity-30">
                     <ArrowDown className="h-5 w-5" />
                   </button>
                 </>
@@ -310,14 +319,16 @@ export default function AdminProducts() {
                   </button>
                 </>
               )}
-            </li>
+            </motion.li>
           ))}
         </ul>
+        <Pagination page={pg.page} pageCount={pg.pageCount} total={pg.total} size={pg.size} label="produits" onChange={(n) => { pg.setPage(n); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
+        </>
       )}
 
       <AnimatePresence>
         {showForm && (
-          <Modal title={editing ? "Modifier le produit" : "Nouveau produit"} onClose={() => setShowForm(false)} wide>
+          <Modal title={editing ? "Modifier le produit" : "Nouveau produit"} onClose={() => setShowForm(false)} dirty={JSON.stringify(form) !== baseline.current} wide>
             <form onSubmit={submit} className="space-y-5">
               <Field label="Photos du produit" hint="La première photo est la principale. JPG, PNG ou WebP, 8 Mo maximum chacune, 9 photos au plus.">
                 <div

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import WaveDivider from "@/components/public/WaveDivider";
 import { lockScroll } from "@/lib/scrollLock";
 import { useParams, Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -310,6 +311,8 @@ export default function ProductDetailPage() {
       <RecentlyViewed excludeId={product.id} />
 
       {related.length > 0 && (
+        <>
+        <WaveDivider from="bg-blush" to="text-blush-deep/60" variant="soft" />
         <section className="bg-blush-deep/60">
           <div className={`${shell} py-20 md:py-28`}>
             <h2 className="font-brand text-3xl md:text-5xl text-wine mb-10">
@@ -324,6 +327,7 @@ export default function ProductDetailPage() {
             </div>
           </div>
         </section>
+        </>
       )}
 
       <section className={`${shell} py-20 md:py-28`}>

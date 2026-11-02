@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import WaveDivider from "@/components/public/WaveDivider";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -184,6 +185,7 @@ export default function HomePage() {
       {/* Reassurance */}
       {o.show_reassurance && (
       <>
+      <WaveDivider from="bg-blush" to="text-wine" variant="soft" />
       <section className="bg-wine text-blush" aria-label="Nos engagements">
         <motion.ul
           className="mx-auto grid max-w-[1320px] grid-cols-1 gap-x-6 gap-y-6 px-5 py-8 md:px-10 min-[520px]:grid-cols-2 lg:grid-cols-4"
@@ -277,6 +279,7 @@ export default function HomePage() {
       {/* About collage */}
       {o.show_about && (
       <>
+      <WaveDivider from="bg-blush" to="text-blush-deep/60" variant="swell" />
       <section className="relative isolate overflow-hidden bg-blush-deep/60">
         <div className="mx-auto grid max-w-[1320px] items-center gap-14 px-5 py-24 md:px-10 md:py-32 lg:grid-cols-2 lg:gap-24">
           <motion.div
@@ -337,6 +340,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <WaveDivider from="bg-blush-deep/60" to="text-blush" variant="ripple" />
 
       </>
       )}
@@ -374,6 +378,7 @@ export default function HomePage() {
       )}
 
       {/* Final banner */}
+      <WaveDivider from="bg-blush" to="text-wine" variant="layered" />
       <section ref={bannerRef} className="relative isolate overflow-hidden bg-wine text-blush">
         {hasPhotos && (
           <>
@@ -409,6 +414,7 @@ export default function HomePage() {
           </ScrollReveal>
         </div>
       </section>
+      <WaveDivider from="bg-wine" to="text-wine-deep" variant="soft" />
     </>
   );
 }

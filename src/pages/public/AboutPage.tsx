@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import WaveDivider from "@/components/public/WaveDivider";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { api } from "@/api/client";
@@ -95,6 +96,7 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <WaveDivider from="bg-blush" to="text-blush-deep/60" variant="layered" />
       <section className="relative isolate overflow-hidden bg-blush-deep/60">
         <div className="max-w-[1320px] mx-auto px-5 md:px-10 py-20 md:py-28 grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-20">
           <div>

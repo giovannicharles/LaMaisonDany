@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import WaveDivider from "@/components/public/WaveDivider";
 import { CreamJar, LipstickArt, PerfumeBottle } from "@/components/art/Bottles";
 import { optimizeImage } from "@/lib/images";
 import { pickPhotos, useShowcase } from "@/lib/showcase";
@@ -13,6 +14,7 @@ export default function PageHeader({ title, intro }: PageHeaderProps) {
   const real = photos.length >= 3;
 
   return (
+    <>
     <section className="relative isolate overflow-hidden bg-blush-deep/60 pt-[108px]">
       <div
         aria-hidden
@@ -53,5 +55,7 @@ export default function PageHeader({ title, intro }: PageHeaderProps) {
         </div>
       </div>
     </section>
+    <WaveDivider from="bg-blush-deep/60" to="text-blush" variant="swell" />
+    </>
   );
 }

@@ -84,6 +84,9 @@ export interface SiteOptions {
   show_floating_whatsapp: boolean;
   show_prices: boolean;
   show_install_button: boolean;
+  hero_background: "collage" | "slideshow";
+  hero_interval: number;
+  hero_images: string[];
   show_visitor_push: boolean;
   show_contact_form: boolean;
   default_sort: "default" | "price-asc" | "price-desc" | "name";
@@ -203,6 +206,8 @@ export const TEXT_FIELDS: TextField[] = [
   { key: "seo_notfound_title", group: "Référencement des pages", label: "Page introuvable : titre de l'onglet", hint: "Les mots {brand}, {name} et {category} sont remplacés automatiquement.", value: "Page introuvable" },
   { key: "notfound_title", group: "Page introuvable", label: "Titre", value: "Cette page n'existe pas" },
   { key: "notfound_text", group: "Page introuvable", label: "Texte", long: true, value: "Le lien est peut-être ancien ou mal écrit. Retrouvez nos produits dans la boutique." },
+  { key: "hero_slides_pause", group: "Accueil : en-tête", label: "Bouton pause du diaporama", value: "Mettre le diaporama en pause" },
+  { key: "hero_slides_play", group: "Accueil : en-tête", label: "Bouton lecture du diaporama", value: "Relancer le diaporama" },
   { key: "loader_tagline", group: "Écran de chargement", label: "Phrase sous le nom", value: "Parfums, cosmétiques, vins & plus" },
   { key: "brands_list", group: "Accueil", label: "Marques affichées en défilement", hint: "Séparées par des virgules. Laissez vide pour masquer la bande.", long: true, value: "J.P. Chenet, Jean Paul Gaultier, Mauboussin, Diana Castel, Jacques Saint Pres, Mixa, Le Petit Marseillais, Cadum, Yves Rocher, Byphasse, Lacura, Femfresh, Brut, Carré Homme" },
   { key: "videos_title", group: "Accueil", label: "Titre de la section vidéos", value: "Nos produits en vidéo" },
@@ -270,6 +275,9 @@ export const DEFAULT_CONTENT: SiteContent = {
     show_floating_whatsapp: true,
     show_prices: true,
     show_install_button: true,
+    hero_background: "collage",
+    hero_interval: 6,
+    hero_images: [],
     show_visitor_push: true,
     show_contact_form: true,
     default_sort: "default",

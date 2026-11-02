@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { api, whatsappLink } from "@/api/client";
 import type { Product } from "@/types";
 import BrandMarquee from "@/components/public/BrandMarquee";
+import HeroSlides from "@/components/public/HeroSlides";
 import CategoryTiles from "@/components/public/CategoryTiles";
 import Faq from "@/components/public/Faq";
 import HowToOrder from "@/components/public/HowToOrder";
@@ -51,6 +52,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   const photos = pickPhotos(showcase, 6);
+  const slideshow = o.hero_background === "slideshow";
+  const slides = o.hero_images.length > 0 ? o.hero_images : photos.slice(0, 5);
   const hasPhotos = photos.length >= 3;
 
   const heroProof = site.texts.hero_proof.split("\n").map((w) => w.trim()).filter(Boolean);
@@ -81,8 +84,14 @@ export default function HomePage() {
 
       {/* Hero */}
       <section ref={heroRef} className="relative isolate overflow-hidden pt-[108px]">
+        {slideshow && slides.length > 0 && (
+          <>
+            <HeroSlides images={slides} interval={o.hero_interval} pauseLabel={site.texts.hero_slides_pause} playLabel={site.texts.hero_slides_play} />
+            <div aria-hidden className="absolute inset-0 -z-10 max-lg:bg-blush/70 lg:bg-gradient-to-r lg:from-blush lg:via-blush/85 lg:to-blush/0" />
+          </>
+        )}
 
-        <div className="relative mx-auto grid min-h-[min(calc(100svh-72px),800px)] max-w-[1320px] items-center gap-10 px-5 py-10 md:px-10 md:py-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-6">
+        <div className={`relative mx-auto grid min-h-[min(calc(100svh-72px),800px)] max-w-[1320px] items-center gap-10 px-5 py-10 md:px-10 md:py-16 lg:gap-6 ${slideshow && slides.length > 0 ? "lg:grid-cols-[minmax(0,640px)]" : "lg:grid-cols-[1.05fr_0.95fr]"}`}>
           <motion.div style={{ y: textY }}>
             <h1 className="font-brand text-[2.5rem] leading-[1] text-wine sm:text-6xl xl:text-[4.6rem]">
               <SplitLines
@@ -107,14 +116,14 @@ export default function HomePage() {
             {heroProof.length > 0 && (
               <motion.ul {...fadeUp(1.05)} className="mt-8 flex flex-wrap gap-y-2 text-[0.95rem] text-ink-soft">
                 {heroProof.map((t) => (
-                  <li key={t} className="border-l border-blush-edge pl-4 pr-5 first:border-l-0 first:pl-0">{t}</li>
+                  <li key={t} className="pr-5 sm:border-l sm:border-blush-edge sm:pl-4 sm:first:border-l-0 sm:first:pl-0">{t}</li>
                 ))}
               </motion.ul>
             )}
 
           </motion.div>
 
-          <motion.div style={{ y: collageY }} className="relative mx-auto w-full max-w-[520px]">
+          <motion.div style={{ y: collageY }} className={`relative mx-auto w-full max-w-[520px] ${slideshow && slides.length > 0 ? "hidden" : ""}`}>
             {hasPhotos ? (
               <div className="relative aspect-[1/1.04]">
                 <motion.div

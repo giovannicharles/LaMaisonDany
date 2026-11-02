@@ -200,3 +200,5 @@ html.lmd-dark {
   :root { --lmd-chat-bottom: 76px; }
   html { scroll-padding-bottom: 64px; }
 }
+
+@keyframes lmd-kenburns { from { transform: scale(1); } to { transform: scale(1.05); } }

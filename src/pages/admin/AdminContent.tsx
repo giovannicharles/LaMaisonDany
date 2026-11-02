@@ -113,7 +113,7 @@ function VideoFields({
   item: { title: string; src: string; poster: string; product_slug: string };
   update: (patch: Partial<{ title: string; src: string; poster: string; product_slug: string }>) => void;
 }) {
-  const { toast } = useFeedback();
+  const { toast, confirm } = useFeedback();
   const [busy, setBusy] = useState<"video" | "poster" | null>(null);
   const videoRef = useRef<HTMLInputElement>(null);
   const posterRef = useRef<HTMLInputElement>(null);
@@ -155,7 +155,7 @@ function VideoFields({
 }
 
 export default function AdminContent({ initialTab }: { initialTab?: string }) {
-  const { toast } = useFeedback();
+  const { toast, confirm } = useFeedback();
   const [content, setContent] = useState<SiteContent>(DEFAULT_CONTENT);
   const [saved, setSaved] = useState<SiteContent>(DEFAULT_CONTENT);
   const [loading, setLoading] = useState(true);
@@ -225,6 +225,26 @@ export default function AdminContent({ initialTab }: { initialTab?: string }) {
       toast("error", "L'envoi de l'image a échoué.");
     } finally {
       setUploading(false);
+    }
+  };
+
+  const bgRef = useRef<HTMLInputElement>(null);
+  const uploadHeroBackgrounds = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const room = 8 - content.options.hero_images.length;
+    const picked = [...files].slice(0, room);
+    if (picked.some((f) => f.size > 5 * 1024 * 1024)) return toast("error", "Une photo dépasse 5 Mo.");
+    setUploading(true);
+    try {
+      const urls: string[] = [];
+      for (const f of picked) urls.push((await api.media.upload(f)).data.url);
+      set("options", { hero_images: [...content.options.hero_images, ...urls] });
+      toast("success", "Photos envoyées. Pensez à enregistrer.");
+    } catch {
+      toast("error", "L'envoi des photos a échoué.");
+    } finally {
+      setUploading(false);
+      if (bgRef.current) bgRef.current.value = "";
     }
   };
 
@@ -464,6 +484,47 @@ export default function AdminContent({ initialTab }: { initialTab?: string }) {
                   </div>
                   <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => uploadHero(e.target.files?.[0])} />
                 </div>
+              </Field>
+
+              <hr className="border-blush-edge/70" />
+              <h2 className="font-brand text-2xl text-wine">Fond du bandeau</h2>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field label="Affichage" htmlFor="hb-mode">
+                  <Select id="hb-mode" value={content.options.hero_background} onChange={(e) => set("options", { hero_background: e.target.value as "collage" | "slideshow" })}>
+                    <option value="collage">Composition de photos (fixe)</option>
+                    <option value="slideshow">Photos plein écran qui défilent</option>
+                  </Select>
+                </Field>
+                <Field label="Durée de chaque photo" htmlFor="hb-int">
+                  <Select id="hb-int" value={String(content.options.hero_interval)} onChange={(e) => set("options", { hero_interval: Number(e.target.value) })}>
+                    {[4, 5, 6, 8, 10, 12].map((n) => (
+                      <option key={n} value={n}>{n} secondes</option>
+                    ))}
+                  </Select>
+                </Field>
+              </div>
+              <Field label="Photos du diaporama" hint="Jusqu'à 8 photos, 5 Mo chacune, de préférence en paysage. Sans photo, celles de vos produits défilent.">
+                <ul className="mb-3 grid grid-cols-3 gap-3 sm:grid-cols-4">
+                  {content.options.hero_images.map((url, idx) => (
+                    <li key={url} className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-blush-deep">
+                      <img src={url} alt="" className="h-full w-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (await confirm("Retirer cette photo du diaporama ?", "Retirer")) set("options", { hero_images: content.options.hero_images.filter((_, n) => n !== idx) });
+                        }}
+                        aria-label={`Retirer la photo ${idx + 1}`}
+                        className="absolute right-1.5 top-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-wine-deep/80 text-blush transition-colors hover:bg-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <AButton type="button" variant="secondary" disabled={uploading || content.options.hero_images.length >= 8} onClick={() => bgRef.current?.click()}>
+                  <ImagePlus className="h-4 w-4" /> {uploading ? "Envoi..." : "Ajouter des photos"}
+                </AButton>
+                <input ref={bgRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => uploadHeroBackgrounds(e.target.files)} />
               </Field>
 
               <hr className="border-blush-edge/70" />

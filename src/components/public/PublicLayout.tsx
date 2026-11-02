@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { lockScroll } from "@/lib/scrollLock";
 import { Outlet, useLocation } from "react-router-dom";
 import { MotionConfig, motion, useScroll, useSpring } from "framer-motion";
 import Navbar from "./Navbar";
@@ -59,10 +60,8 @@ function Shell() {
   }, [pathname]);
 
   useEffect(() => {
-    document.body.style.overflow = intro ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    if (!intro) return;
+    return lockScroll();
   }, [intro]);
 
   return (

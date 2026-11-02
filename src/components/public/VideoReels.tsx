@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { lockScroll } from "@/lib/scrollLock";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Play, X } from "lucide-react";
@@ -61,11 +62,10 @@ export default function VideoReels() {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(null);
     window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockScroll();
     return () => {
       window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
+      unlock();
     };
   }, [open]);
 

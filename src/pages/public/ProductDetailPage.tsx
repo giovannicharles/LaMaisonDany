@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { lockScroll } from "@/lib/scrollLock";
 import { useParams, Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Link2, MessageCircleQuestion, PenLine, Share2, X, ZoomIn } from "lucide-react";
@@ -34,11 +35,10 @@ function Lightbox({ photos, index, onClose, onChange, name }: { photos: string[]
       if (e.key === "ArrowRight") next();
     };
     window.addEventListener("keydown", onKey);
-    const overflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockScroll();
     return () => {
       window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = overflow;
+      unlock();
     };
   }, [onClose, prev, next]);
 

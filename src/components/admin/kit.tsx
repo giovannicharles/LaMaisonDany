@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { lockScroll } from "@/lib/scrollLock";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, CheckCircle2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -118,11 +119,10 @@ export function Modal({
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && void requestClose();
     window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockScroll();
     return () => {
       window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
+      unlock();
     };
   }, [requestClose]);
 

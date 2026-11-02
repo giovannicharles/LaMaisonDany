@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { lockScroll } from "@/lib/scrollLock";
 import { AnimatePresence, motion } from "framer-motion";
 import { Minus, Plus, X } from "lucide-react";
 import type { Product } from "@/types";
@@ -46,12 +47,11 @@ function OrderDialog({ product, onClose }: { product: Product; onClose: () => vo
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockScroll();
     textRef.current?.focus();
     return () => {
       window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
+      unlock();
     };
   }, [onClose]);
 

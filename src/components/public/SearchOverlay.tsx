@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { lockScroll } from "@/lib/scrollLock";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Clock, CornerDownLeft, Search, Tag, X } from "lucide-react";
@@ -66,10 +67,9 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     api.categories.list().then((r) => setCategories(r.data.filter((c) => Number(c.product_count ?? 0) > 0))).catch(() => {});
     inputRef.current?.focus();
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockScroll();
     return () => {
-      document.body.style.overflow = prev;
+      unlock();
     };
   }, []);
 

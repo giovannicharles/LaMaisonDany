@@ -8,6 +8,7 @@ import { track } from "@/lib/track";
 import { useSite } from "@/lib/siteContent";
 import { ProductArt, artKindFor } from "@/components/art/Bottles";
 import WhatsAppIcon from "./WhatsAppIcon";
+import FavoriteButton from "./FavoriteButton";
 
 export default function ProductCard({ product, headingAs: Heading = "h3" }: { product: Product; headingAs?: "h2" | "h3" }) {
   const { texts } = useSite();
@@ -51,8 +52,9 @@ export default function ProductCard({ product, headingAs: Heading = "h3" }: { pr
             {product.category_name}
           </span>
         )}
+        <FavoriteButton productId={product.id} className="absolute right-2.5 top-2.5" />
         {unavailable && (
-          <span className="absolute right-3 top-3 rounded-full bg-wine px-3 py-1 text-xs font-medium text-blush shadow-sm">
+          <span className="absolute bottom-3 left-3 rounded-full bg-wine px-3 py-1 text-xs font-medium text-blush shadow-sm">
             Indisponible
           </span>
         )}

@@ -7,6 +7,7 @@ import CataloguePage from "@/pages/public/CataloguePage";
 import ProductDetailPage from "@/pages/public/ProductDetailPage";
 import AboutPage from "@/pages/public/AboutPage";
 import ContactPage from "@/pages/public/ContactPage";
+import FavoritesPage from "@/pages/public/FavoritesPage";
 import { ApiError, api } from "@/api/client";
 import { SiteProvider } from "@/lib/siteContent";
 import Seo from "@/components/public/Seo";
@@ -114,6 +115,7 @@ export default function App() {
           <Route path="/produit/:slug" element={<ProductDetailPage />} />
           <Route path="/a-propos" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/favoris" element={<FavoritesPage />} />
         </Route>
         <Route path="/admin" element={<SiteProvider><Suspense fallback={AdminFallback}><AdminApp /></Suspense></SiteProvider>} />
         <Route path="*" element={<Navigate to="/" replace />} />

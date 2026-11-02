@@ -347,7 +347,7 @@ export default function ChatBot() {
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Fermer le chat" : "Ouvrir le chat"}
         aria-expanded={open}
-        style={{ bottom: "calc(88px + env(safe-area-inset-bottom))" }}
+        style={{ bottom: "calc(var(--lmd-chat-bottom, 88px) + env(safe-area-inset-bottom))" }}
         className="fixed right-5 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-blush text-wine ring-1 ring-blush-edge shadow-[0_14px_30px_-12px_rgba(107,23,48,0.55)] hover:bg-white transition-colors"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}

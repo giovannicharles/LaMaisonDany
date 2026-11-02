@@ -14,6 +14,7 @@ import VideoReels from "@/components/public/VideoReels";
 import WhatsAppIcon from "@/components/public/WhatsAppIcon";
 import { ProductGridSkeleton } from "@/components/public/Skeleton";
 import CountUp from "@/components/public/CountUp";
+import RecentlyViewed from "@/components/public/RecentlyViewed";
 import { CircularText, HeroSpotlight, RotatingWords, ScrollCue } from "@/components/public/HeroExtras";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
 import { EASE } from "@/lib/motion";
@@ -327,6 +328,8 @@ export default function HomePage() {
 
       </>
       )}
+
+      <RecentlyViewed className="bg-blush-deep/40" />
 
       {o.show_videos && <VideoReels />}
 

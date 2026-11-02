@@ -8,6 +8,8 @@ import ChatBot from "./ChatBot";
 import Preloader from "./Preloader";
 import BackToTop from "./BackToTop";
 import InstallPrompt from "./InstallPrompt";
+import BottomNav from "./BottomNav";
+import { SearchProvider } from "./SearchOverlay";
 import { OrderProvider } from "./OrderDialog";
 import { EASE } from "@/lib/motion";
 import { SiteProvider, useSite } from "@/lib/siteContent";
@@ -64,7 +66,7 @@ function Shell() {
   }, [intro]);
 
   return (
-    <div className="lmd min-h-screen flex flex-col">
+    <div className="lmd min-h-screen flex flex-col max-md:pb-[calc(56px+env(safe-area-inset-bottom))]">
           {intro && <Preloader onDone={finishIntro} />}
           {!intro && (
             <>
@@ -99,6 +101,7 @@ function Shell() {
                 <ChatBot />
                 <BackToTop />
                 <InstallPrompt />
+                <BottomNav />
                 {options.show_floating_whatsapp && <WhatsAppButton />}
               </aside>
             </>
@@ -112,7 +115,9 @@ export default function PublicLayout() {
     <MotionConfig reducedMotion="user">
       <SiteProvider>
         <OrderProvider>
-          <Shell />
+          <SearchProvider>
+            <Shell />
+          </SearchProvider>
         </OrderProvider>
       </SiteProvider>
     </MotionConfig>

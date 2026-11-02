@@ -195,3 +195,8 @@ html.lmd-dark {
   --color-ink-soft: #c9a5b0;
   color-scheme: dark;
 }
+
+@media (max-width: 767px) {
+  :root { --lmd-chat-bottom: 76px; }
+  html { scroll-padding-bottom: 64px; }
+}

@@ -36,10 +36,11 @@ export default function CataloguePage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
-  const [search, setSearch] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(() => searchParams.get("q") ?? "");
+  const [onlyAvailable, setOnlyAvailable] = useState(false);
   const [sortPick, setSort] = useState<SortKey | null>(null);
   const sort: SortKey = sortPick ?? site.options.default_sort;
-  const [searchParams, setSearchParams] = useSearchParams();
   const activeCategory = searchParams.get("categorie") ?? "";
   const setActiveCategory = (slug: string) => setSearchParams(slug ? { categorie: slug } : {}, { replace: true });
 
@@ -67,6 +68,7 @@ export default function CataloguePage() {
     let list = products.filter(
       (p) =>
         (!site.options.hide_unavailable || p.available !== false) &&
+        (!onlyAvailable || p.available !== false) &&
         (!activeCategory || p.category_slug === activeCategory) &&
         (!q || norm(`${p.name} ${p.description ?? ""} ${p.category_name ?? ""}`).includes(q))
     );
@@ -82,7 +84,7 @@ export default function CataloguePage() {
       list = [...list].sort((a, b) => a.name.localeCompare(b.name, "fr"));
     }
     return list;
-  }, [products, activeCategory, search, sort, site.options.hide_unavailable]);
+  }, [products, activeCategory, search, sort, site.options.hide_unavailable, onlyAvailable]);
 
   const pg = usePagination(results, 12, `${activeCategory}|${search}|${sort}`);
 
@@ -127,6 +129,10 @@ export default function CataloguePage() {
                 {cat.name} <span className={cn("ml-1", activeCategory === cat.slug ? "text-blush/85" : "text-rose")}>{counts.get(cat.id)}</span>
               </button>
             ))}
+            <span aria-hidden className="mx-1 hidden h-7 w-px self-center bg-blush-edge md:block" />
+            <button onClick={() => setOnlyAvailable((v) => !v)} className={chip(onlyAvailable)} aria-pressed={onlyAvailable}>
+              {site.texts.filter_available}
+            </button>
           </div>
 
         </div>

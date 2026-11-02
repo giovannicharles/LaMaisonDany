@@ -13,7 +13,7 @@ export default function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom))" }}
-      className={`lmd-btn lmd-btn-wine fixed right-5 z-50 !px-4 sm:!px-6 !py-3.5 ${onProductPage ? "max-md:hidden" : ""}`}
+      className={`lmd-btn lmd-btn-wine fixed right-5 z-50 !px-4 sm:!px-6 !py-3.5 max-md:hidden`}
       aria-label="Nous écrire sur WhatsApp"
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}

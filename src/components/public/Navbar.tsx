@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Link, NavLink } from "react-router-dom";
-import { Clock, Menu, Phone, X } from "lucide-react";
+import { Clock, Heart, Menu, Phone, Search, X } from "lucide-react";
+import { useFavorites } from "@/lib/favorites";
+import { useSearch } from "./SearchOverlay";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { whatsappLink } from "@/api/client";
@@ -16,6 +18,8 @@ const links = [
 
 export default function Navbar() {
   const { general, texts } = useSite();
+  const { open: openSearch } = useSearch();
+  const favCount = useFavorites().length;
   const socials = [
     { label: "Instagram", href: general.instagram },
     { label: "Facebook", href: general.facebook },
@@ -87,7 +91,7 @@ export default function Navbar() {
         </div>
       )}
       <nav className="max-w-[1320px] mx-auto px-5 md:px-10 h-[72px] flex items-center justify-between">
-        <Link to="/" onClick={() => setOpen(false)} className="font-brand text-[1.45rem] leading-none text-wine">
+        <Link to="/" onClick={() => setOpen(false)} className="whitespace-nowrap font-brand text-[1.45rem] leading-none text-wine">
           {brandWords.join(" ")} {brandLast && <span className="italic text-rose">{brandLast}</span>}
         </Link>
 
@@ -121,12 +125,19 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button onClick={openSearch} aria-label={texts.search_title} title={texts.search_title} className="flex h-11 w-11 items-center justify-center rounded-full text-wine transition-colors hover:bg-blush-deep">
+            <Search className="h-5 w-5" />
+          </button>
+          <Link to="/favoris" aria-label={texts.nav_favorites} title={texts.nav_favorites} className="relative hidden h-11 w-11 items-center justify-center rounded-full text-wine transition-colors hover:bg-blush-deep md:flex">
+            <Heart className="h-5 w-5" />
+            {favCount > 0 && <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose px-1 text-[0.62rem] font-semibold text-[#fff]">{favCount}</span>}
+          </Link>
           <a
             href={whatsappLink()}
             target="_blank"
             rel="noopener noreferrer"
-            className="lmd-btn lmd-btn-wine !py-2.5 !px-5 !text-sm hidden sm:inline-flex"
+            className="lmd-btn lmd-btn-wine !py-2.5 !px-5 !text-sm max-md:!hidden"
           >
             <WhatsAppIcon className="h-4 w-4" />
             {texts.nav_cta}

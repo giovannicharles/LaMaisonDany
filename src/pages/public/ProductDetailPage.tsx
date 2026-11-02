@@ -7,6 +7,9 @@ import type { Product } from "@/types";
 import { formatPrice } from "@/lib/utils";
 import { optimizeImage } from "@/lib/images";
 import { track } from "@/lib/track";
+import { recent } from "@/lib/recent";
+import RecentlyViewed from "@/components/public/RecentlyViewed";
+import FavoriteButton from "@/components/public/FavoriteButton";
 import { EASE } from "@/lib/motion";
 import Rich from "@/components/public/Rich";
 import { iconFor, useSite } from "@/lib/siteContent";
@@ -104,6 +107,7 @@ export default function ProductDetailPage() {
       .then((res) => {
         setProduct(res.data);
         track("product_view", res.data.id);
+        recent.viewProduct(res.data.id);
         if (res.data.category_slug) {
           api.products
             .list({ category: res.data.category_slug })
@@ -273,6 +277,7 @@ export default function ProductDetailPage() {
                 <button onClick={() => openProduct(product)} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-medium text-wine hover:bg-blush-deep">
                   <PenLine className="h-4 w-4" /> Personnaliser mon message
                 </button>
+                <FavoriteButton productId={product.id} className="!h-10 !w-10" />
                 <button onClick={share} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-medium text-wine hover:bg-blush-deep">
                   {copied ? <Link2 className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
                   {copied ? "Lien copié" : "Partager"}
@@ -301,6 +306,8 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+
+      <RecentlyViewed excludeId={product.id} />
 
       {related.length > 0 && (
         <section className="bg-blush-deep/60">

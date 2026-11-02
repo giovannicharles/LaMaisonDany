@@ -12,6 +12,7 @@ import WhatsAppIcon from "@/components/public/WhatsAppIcon";
 import { EASE } from "@/lib/motion";
 import { useSite } from "@/lib/siteContent";
 import Seo from "@/components/public/Seo";
+import { breadcrumbLd, fill } from "@/lib/seo";
 import Rich from "@/components/public/Rich";
 import { cn } from "@/lib/utils";
 
@@ -105,13 +106,19 @@ export default function CataloguePage() {
   return (
     <div>
       <Seo
-        title={activeCategoryName ? `${activeCategoryName} : la boutique` : "La boutique"}
+        title={activeCategoryName ? fill(site.texts.seo_category_title, { category: activeCategoryName }) : fill(site.texts.seo_shop_title, {})}
         description={
           activeCategoryName
-            ? `Découvrez notre sélection ${activeCategoryName.toLowerCase()} chez ${site.general.brand}. Un clic, et la conversation WhatsApp s'ouvre.`
-            : `Parfums, cosmétiques, vins et plus encore. Parcourez la boutique ${site.general.brand} et commandez sur WhatsApp.`
+            ? fill(site.texts.seo_category_description, { category: activeCategoryName, brand: site.general.brand })
+            : fill(site.texts.seo_shop_description, { brand: site.general.brand })
         }
         path={activeCategory ? `/catalogue?categorie=${activeCategory}` : "/catalogue"}
+        noindex={Boolean(searchParams.get("q"))}
+        jsonLd={
+          activeCategoryName
+            ? [breadcrumbLd([["Accueil", window.location.origin + "/"], ["Boutique", window.location.origin + "/catalogue"], [activeCategoryName, window.location.origin + `/catalogue?categorie=${activeCategory}`]])]
+            : [breadcrumbLd([["Accueil", window.location.origin + "/"], ["Boutique", window.location.origin + "/catalogue"]])]
+        }
       />
       <PageHeader
         title={<Rich text={site.texts.shop_title} />}

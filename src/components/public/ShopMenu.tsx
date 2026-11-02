@@ -80,7 +80,7 @@ export default function ShopMenu() {
           >
             <div className="grid gap-6 rounded-[1.75rem] bg-blush p-6 shadow-[0_40px_80px_-30px_rgba(74,15,34,0.55)] ring-1 ring-blush-edge md:grid-cols-[1fr_1.05fr]">
               <div>
-                <p className="mb-3 text-xs font-medium uppercase tracking-[0.16em] text-rose">{texts.nav_shop_menu_title}</p>
+                <p className="mb-3 font-brand text-lg text-wine">{texts.nav_shop_menu_title}</p>
                 <ul className="grid grid-cols-2 gap-1.5">
                   {categories.slice(0, 8).map((c) => (
                     <li key={c.id}>
@@ -98,7 +98,7 @@ export default function ShopMenu() {
 
               {featured.length > 0 && (
                 <div>
-                  <p className="mb-3 text-xs font-medium uppercase tracking-[0.16em] text-rose">{texts.nav_shop_featured}</p>
+                  <p className="mb-3 font-brand text-lg text-wine">{texts.nav_shop_featured}</p>
                   <ul className="grid grid-cols-3 gap-3">
                     {featured.map((p) => (
                       <li key={p.id}>

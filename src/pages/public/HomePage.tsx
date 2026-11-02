@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { api, whatsappLink } from "@/api/client";
 import type { Product } from "@/types";
 import BrandMarquee from "@/components/public/BrandMarquee";
@@ -13,19 +13,17 @@ import SplitLines from "@/components/public/SplitLines";
 import VideoReels from "@/components/public/VideoReels";
 import WhatsAppIcon from "@/components/public/WhatsAppIcon";
 import { ProductGridSkeleton } from "@/components/public/Skeleton";
-import CountUp from "@/components/public/CountUp";
 import RecentlyViewed from "@/components/public/RecentlyViewed";
-import { CircularText, HeroSpotlight, RotatingWords, ScrollCue } from "@/components/public/HeroExtras";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
 import { EASE } from "@/lib/motion";
 import { optimizeImage } from "@/lib/images";
-import { pickPhotos, useShowcase, useShowcaseReady } from "@/lib/showcase";
+import { pickPhotos, useShowcase } from "@/lib/showcase";
 import { iconFor, useSite } from "@/lib/siteContent";
 import Seo from "@/components/public/Seo";
 import { richLines } from "@/components/public/Rich";
 import { organizationLd } from "@/lib/seo";
 import { CreamJar, PerfumeBottle, WineBottle } from "@/components/art/Bottles";
-import { Arches, DotGrid, Rings, Sparkle, Sprig, Vine, Waves } from "@/components/art/Ornaments";
+import { Waves } from "@/components/art/Ornaments";
 
 const fadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 22 },
@@ -49,17 +47,13 @@ export default function HomePage() {
   const site = useSite();
   const o = site.options;
   const showcase = useShowcase();
-  const showcaseReady = useShowcaseReady();
   const [featured, setFeatured] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   const photos = pickPhotos(showcase, 6);
   const hasPhotos = photos.length >= 3;
-  const categoriesCount = new Set(showcase.map((p) => p.category_id).filter((c) => c != null)).size;
 
-  const heroWords = site.texts.hero_words.split("\n").map((w) => w.trim()).filter(Boolean);
   const heroProof = site.texts.hero_proof.split("\n").map((w) => w.trim()).filter(Boolean);
-  const spotlight = featured.length >= 3 ? featured : showcase;
 
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -87,46 +81,20 @@ export default function HomePage() {
 
       {/* Hero */}
       <section ref={heroRef} className="relative isolate overflow-hidden pt-[108px]">
-        <Rings className="lmd-spin -left-40 top-24 h-[520px] w-[520px] text-rose/15" />
-        <Sprig className="-right-6 top-20 hidden h-[420px] rotate-12 text-wine/15 lg:block" />
-        <Sparkle className="lmd-float left-[8%] top-[34%] h-6 w-6 text-rose/50" />
-        <Sparkle className="lmd-float bottom-24 right-[44%] h-4 w-4 text-wine/40" style={{ animationDelay: "1.4s" }} />
-        <DotGrid className="bottom-10 left-6 h-28 w-28 text-wine/15" />
-        <motion.div
-          aria-hidden
-          className="absolute -right-40 -top-40 h-[640px] w-[640px] rounded-full bg-blush-deep opacity-80 blur-3xl"
-          animate={{ x: [0, -40, 0], y: [0, 30, 0], scale: [1, 1.08, 1] }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-        />
 
         <div className="relative mx-auto grid min-h-[min(calc(100svh-72px),800px)] max-w-[1320px] items-center gap-10 px-5 py-10 md:px-10 md:py-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-6">
           <motion.div style={{ y: textY }}>
-            {site.texts.hero_eyebrow.trim() && (
-              <motion.p {...fadeUp(0)} className="mb-6 inline-flex items-center gap-2.5 rounded-full bg-white/80 px-4 py-2 text-sm font-medium text-wine shadow-sm ring-1 ring-blush-edge backdrop-blur">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                </span>
-                {site.texts.hero_eyebrow}
-              </motion.p>
-            )}
             <h1 className="font-brand text-[2.5rem] leading-[1] text-wine sm:text-6xl xl:text-[4.6rem]">
               <SplitLines
                 delay={0.15}
                 lines={[site.hero.line1, site.hero.line2, <span key="r" className="italic text-rose">{site.hero.accent}</span>]}
               />
             </h1>
-            {heroWords.length > 0 && (
-              <motion.p {...fadeUp(0.65)} className="mt-6 font-brand text-2xl text-wine sm:text-3xl">
-                {site.texts.hero_words_prefix} <RotatingWords words={heroWords} />
-              </motion.p>
-            )}
             <motion.p {...fadeUp(0.75)} className="mt-5 max-w-[46ch] text-lg leading-relaxed text-ink-soft">
               {site.hero.text}
             </motion.p>
             <motion.div {...fadeUp(0.95)} className="mt-9 flex flex-col gap-3.5 sm:flex-row">
-              <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="lmd-btn lmd-btn-wine group relative overflow-hidden !px-8 !py-4 text-[1.05rem] shadow-[0_18px_34px_-14px_rgba(107,23,48,0.7)]">
-                <span aria-hidden className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-white/25 transition-transform duration-700 group-hover:translate-x-[420%]" />
+              <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="lmd-btn lmd-btn-wine !px-8 !py-4 text-[1.05rem]">
                 <WhatsAppIcon className="relative h-5 w-5" />
                 <span className="relative">{site.hero.cta_primary}</span>
               </a>
@@ -137,32 +105,13 @@ export default function HomePage() {
             </motion.div>
 
             {heroProof.length > 0 && (
-              <motion.ul {...fadeUp(1.05)} className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-soft">
+              <motion.ul {...fadeUp(1.05)} className="mt-8 flex flex-wrap gap-y-2 text-[0.95rem] text-ink-soft">
                 {heroProof.map((t) => (
-                  <li key={t} className="flex items-center gap-2">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-                      <Check className="h-3 w-3" strokeWidth={3} />
-                    </span>
-                    {t}
-                  </li>
+                  <li key={t} className="border-l border-blush-edge pl-4 pr-5 first:border-l-0 first:pl-0">{t}</li>
                 ))}
               </motion.ul>
             )}
 
-            {showcaseReady && showcase.length > 0 && (
-              <motion.dl {...fadeUp(1.15)} className="mt-9 flex gap-8 border-t border-blush-edge/70 pt-6 text-wine">
-                <div>
-                  <dt className="sr-only">Produits</dt>
-                  <dd className="font-brand text-4xl leading-none"><CountUp to={showcase.length} /></dd>
-                  <dd className="mt-1 text-sm text-ink-soft">{site.texts.stats_products}</dd>
-                </div>
-                <div>
-                  <dt className="sr-only">Univers</dt>
-                  <dd className="font-brand text-4xl leading-none"><CountUp to={categoriesCount} /></dd>
-                  <dd className="mt-1 text-sm text-ink-soft">{site.texts.stats_categories}</dd>
-                </div>
-              </motion.dl>
-            )}
           </motion.div>
 
           <motion.div style={{ y: collageY }} className="relative mx-auto w-full max-w-[520px]">
@@ -199,21 +148,12 @@ export default function HomePage() {
                   animate={{ scale: 1, rotate: -8 }}
                   transition={{ type: "spring", stiffness: 160, damping: 11, delay: 1.4 }}
                 >
-                  <div className="relative flex h-[120px] w-[120px] items-center justify-center">
-                    <CircularText text={site.texts.hero_badge_ring} className="absolute inset-0 h-full w-full text-rose/80 [animation-duration:24s]" />
-                  <div className="flex h-[88px] w-[88px] flex-col items-center justify-center rounded-full bg-blush text-center text-wine shadow-[0_18px_34px_-14px_rgba(107,23,48,0.55)]">
+                  <div className="relative flex h-[104px] w-[104px] items-center justify-center">
+                  <div className="flex h-[104px] w-[104px] flex-col items-center justify-center rounded-full bg-blush text-center text-wine shadow-[0_18px_34px_-14px_rgba(107,23,48,0.55)]">
                     <span className="font-brand text-3xl italic leading-none">{site.hero.badge_title}</span>
-                    <span className="mt-1 text-[0.62rem] font-medium leading-tight">{site.hero.badge_text}</span>
+                    <span className="mt-1 text-[0.7rem] font-medium">{site.hero.badge_text}</span>
                   </div>
                   </div>
-                </motion.div>
-                <motion.div
-                  className="absolute -bottom-4 left-1/2 z-10 -translate-x-[42%] sm:-translate-x-[36%]"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.9, delay: 1.6, ease: EASE }}
-                >
-                  <HeroSpotlight products={spotlight} />
                 </motion.div>
               </div>
             ) : (
@@ -229,7 +169,6 @@ export default function HomePage() {
             )}
           </motion.div>
         </div>
-        <ScrollCue label={site.texts.hero_scroll} />
       </section>
       <div id="apres-hero" className="scroll-mt-20" />
 
@@ -255,9 +194,6 @@ export default function HomePage() {
                   show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: EASE } },
                 }}
               >
-                <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blush/12 ring-1 ring-blush/25 transition-all duration-500 group-hover:rotate-[10deg] group-hover:scale-110 group-hover:bg-blush">
-                  <Icon className="h-5 w-5 text-blush-edge transition-colors duration-500 group-hover:text-wine" strokeWidth={1.6} />
-                </span>
                 <div>
                   <p className="font-medium leading-tight">{item.title}</p>
                   <p className="mt-1 text-sm leading-snug text-blush/70">{item.text}</p>
@@ -277,8 +213,6 @@ export default function HomePage() {
       {o.show_categories && (
       <>
       <section className="relative isolate mx-auto max-w-[1320px] px-5 pt-24 md:px-10 md:pt-32">
-        <Arches className="-right-10 top-16 hidden h-[360px] text-wine/10 md:block" />
-        <Sparkle className="lmd-float right-[12%] top-24 h-5 w-5 text-rose/40" />
         <h2 className="mb-10 font-brand text-4xl leading-[1.03] text-wine md:mb-14 md:text-6xl">
           <SplitLines onView lines={richLines(site.texts.home_categories_title, site.general.brand)} />
         </h2>
@@ -292,8 +226,6 @@ export default function HomePage() {
       {o.show_featured && (
       <>
       <section className="relative isolate mx-auto max-w-[1320px] px-5 py-24 md:px-10 md:py-32">
-        <Vine className="-left-14 top-10 hidden h-[300px] text-rose/20 xl:block" />
-        <DotGrid className="-right-4 bottom-20 hidden h-32 w-32 text-wine/10 md:block" />
         <div className="mb-12 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
           <h2 className="font-brand text-4xl leading-[1.03] text-wine md:text-6xl">
             <SplitLines onView lines={richLines(site.texts.home_featured_title, site.general.brand)} />
@@ -337,8 +269,6 @@ export default function HomePage() {
       {o.show_about && (
       <>
       <section className="relative isolate overflow-hidden bg-blush-deep/60">
-        <Rings className="lmd-spin -right-52 -top-40 h-[620px] w-[620px] text-wine/10" />
-        <Sprig className="-left-8 bottom-0 hidden h-[360px] -rotate-12 text-wine/15 lg:block" />
         <div className="mx-auto grid max-w-[1320px] items-center gap-14 px-5 py-24 md:px-10 md:py-32 lg:grid-cols-2 lg:gap-24">
           <motion.div
             className="relative mx-auto aspect-[1/1.02] w-full max-w-[520px]"
@@ -407,7 +337,6 @@ export default function HomePage() {
       <>
       <section className="relative isolate mx-auto max-w-[1320px] px-5 py-24 md:px-10 md:py-32">
         <Waves className="inset-x-0 top-1/3 h-24 w-full text-rose/20" />
-        <Sparkle className="lmd-float right-[6%] top-20 h-6 w-6 text-wine/40" />
         <h2 className="mb-10 font-brand text-4xl leading-[1.03] text-wine md:mb-14 md:text-6xl">
           <SplitLines onView lines={richLines(site.texts.home_howto_title, site.general.brand)} />
         </h2>
@@ -436,11 +365,7 @@ export default function HomePage() {
       )}
 
       {/* Final banner */}
-      <section ref={bannerRef} className="relative isolate overflow-hidden bg-gradient-to-br from-wine to-wine-deep text-blush">
-        <Rings className="lmd-spin -left-40 -top-40 h-[560px] w-[560px] text-blush/10" />
-        <Rings className="lmd-spin -bottom-52 -right-40 h-[620px] w-[620px] text-blush/10" />
-        <Sparkle className="lmd-float left-[20%] top-16 h-6 w-6 text-blush/50" />
-        <Sparkle className="lmd-float bottom-20 right-[22%] h-4 w-4 text-blush/40" style={{ animationDelay: "1.2s" }} />
+      <section ref={bannerRef} className="relative isolate overflow-hidden bg-wine text-blush">
         {hasPhotos && (
           <>
             <motion.div

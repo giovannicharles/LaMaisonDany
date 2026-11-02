@@ -123,7 +123,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 
   return (
     <motion.div className="fixed inset-0 z-[85] flex items-start justify-center px-4 pt-[9vh]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-      <button aria-label={texts.search_close} className="absolute inset-0 bg-wine-deep/55 backdrop-blur-sm" onClick={onClose} />
+      <button aria-label={texts.search_close} className="absolute inset-0 bg-wine-deep/55" onClick={onClose} />
       <motion.div
         role="dialog"
         aria-modal="true"
@@ -248,7 +248,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
                           <Tag className="h-5 w-5" />
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className="block text-xs font-medium uppercase tracking-wider text-rose">{texts.search_categories}</span>
+                          <span className="block text-sm text-rose">{texts.search_categories}</span>
                           <span className="block truncate font-brand text-lg text-wine">{r.label}</span>
                         </span>
                       </>
@@ -258,7 +258,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
                           {r.product.image_url && <img src={optimizeImage(r.product.image_url, 120)} alt="" className="h-full w-full object-cover" />}
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate text-xs font-medium uppercase tracking-wider text-rose">{r.product.category_name || texts.search_results}</span>
+                          <span className="block truncate text-sm text-rose">{r.product.category_name || texts.search_results}</span>
                           <span className="block truncate font-brand text-lg text-wine">{r.label}</span>
                           <span className="block text-sm text-ink-soft">{formatPrice(r.product.price)}</span>
                         </span>

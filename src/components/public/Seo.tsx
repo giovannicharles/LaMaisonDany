@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useSite } from "@/lib/siteContent";
-import { absoluteUrl, truncate } from "@/lib/seo";
+import { absoluteUrl, pageTitle, truncate } from "@/lib/seo";
+import { noDash } from "@/lib/clean";
 
 interface SeoProps {
   title?: string;
@@ -35,8 +36,8 @@ export default function Seo({ title, description, image, path, type = "website",
 
   useEffect(() => {
     const origin = window.location.origin;
-    const fullTitle = title ? `${title} | ${brand}` : site.seo.title || brand;
-    const desc = truncate(description || site.seo.description || "");
+    const fullTitle = noDash(title ? pageTitle(title, brand) : site.seo.title || brand);
+    const desc = truncate(noDash(description || site.seo.description || ""));
     const url = origin + (path ?? window.location.pathname);
     const img = absoluteUrl(image || site.seo.og_image_url || "/og-default.png", origin);
 
@@ -50,6 +51,8 @@ export default function Seo({ title, description, image, path, type = "website",
     meta("property", "og:description", desc);
     meta("property", "og:url", url);
     meta("property", "og:image", img);
+    meta("property", "og:image:alt", fullTitle);
+    meta("name", "twitter:image:alt", fullTitle);
     meta("name", "twitter:card", "summary_large_image");
     meta("name", "twitter:title", fullTitle);
     meta("name", "twitter:description", desc);

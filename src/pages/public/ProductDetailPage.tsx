@@ -21,7 +21,7 @@ import { Skeleton } from "@/components/public/Skeleton";
 import { ScrollReveal } from "@/components/public/ScrollReveal";
 import WhatsAppIcon from "@/components/public/WhatsAppIcon";
 import Seo from "@/components/public/Seo";
-import { productLd } from "@/lib/seo";
+import { fill, productLd } from "@/lib/seo";
 
 function Lightbox({ photos, index, onClose, onChange, name }: { photos: string[]; index: number; onClose: () => void; onChange: (i: number) => void; name: string }) {
   const prev = useCallback(() => onChange((index - 1 + photos.length) % photos.length), [index, photos.length, onChange]);
@@ -159,7 +159,7 @@ export default function ProductDetailPage() {
   if (error || !product) {
     return (
       <div className={`${shell} pt-[140px] pb-24 text-center`}>
-        <Seo title="Produit introuvable" noindex />
+        <Seo title={fill(site.texts.seo_notfound_title, {})} noindex />
         <p className="font-brand text-3xl text-wine">{site.texts.product_not_found}</p>
         <Link to="/catalogue" className="lmd-btn lmd-btn-ghost mt-8">
           Retour à la boutique
@@ -174,8 +174,8 @@ export default function ProductDetailPage() {
   return (
     <div>
       <Seo
-        title={product.name}
-        description={product.description || `${product.name} chez ${site.general.brand}. Commandez simplement sur WhatsApp.`}
+        title={fill(site.texts.seo_product_title, { name: product.name, category: product.category_name ?? "" })}
+        description={product.description || fill(site.texts.seo_product_description, { name: product.name, brand: site.general.brand, category: product.category_name ?? "" })}
         image={product.image_url}
         path={`/produit/${product.slug}`}
         type="product"

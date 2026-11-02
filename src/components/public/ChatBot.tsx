@@ -190,7 +190,7 @@ export default function ChatBot() {
             exit={{ opacity: 0, y: 20, scale: 0.97 }}
             transition={{ duration: 0.4, ease: EASE }}
           >
-            <header className="flex items-center gap-3 bg-gradient-to-r from-wine to-wine-deep px-5 py-4 text-blush">
+            <header className="flex items-center gap-3 bg-wine px-5 py-4 text-blush">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blush/15 font-brand text-xl italic">D</span>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium leading-tight">{bot.name}</p>

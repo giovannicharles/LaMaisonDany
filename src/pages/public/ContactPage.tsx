@@ -4,6 +4,7 @@ import { api, whatsappLink } from "@/api/client";
 import { useSite } from "@/lib/siteContent";
 import PageHeader from "@/components/public/PageHeader";
 import Seo from "@/components/public/Seo";
+import { breadcrumbLd, fill } from "@/lib/seo";
 import Rich from "@/components/public/Rich";
 import WhatsAppIcon from "@/components/public/WhatsAppIcon";
 
@@ -37,7 +38,7 @@ export default function ContactPage() {
 
   return (
     <div>
-      <Seo title="Contact" description={texts.contact_intro} path="/contact" />
+      <Seo title={fill(texts.seo_contact_title, {})} description={fill(texts.seo_contact_description, { brand: general.brand })} path="/contact" jsonLd={[breadcrumbLd([["Accueil", window.location.origin + "/"], ["Contact", window.location.origin + "/contact"]])]} />
       <PageHeader
         title={<Rich text={texts.contact_title} />}
         intro={texts.contact_intro}

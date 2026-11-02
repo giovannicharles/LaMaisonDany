@@ -11,6 +11,21 @@ export function isoCurrency(label: string): string {
   return "XAF";
 }
 
+export function fill(template: string, vars: Record<string, string>): string {
+  let out = template;
+  for (const [k, v] of Object.entries(vars)) out = out.split("{" + k + "}").join(v ?? "");
+  return out
+    .replace(/\s*[:,]\s*(?=\s*($|\|))/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+/** Titre d'onglet : « page | marque », sans dépasser ce que les moteurs affichent (environ 62 caractères). */
+export function pageTitle(title: string, brand: string): string {
+  const full = `${title} | ${brand}`;
+  return full.length <= 62 ? full : title;
+}
+
 export function truncate(text: string, max = 155): string {
   const clean = text.replace(/\s+/g, " ").trim();
   if (clean.length <= max) return clean;
@@ -47,7 +62,21 @@ export function organizationLd(site: SiteContent, origin: string) {
       name: g.brand,
       url: origin,
       inLanguage: "fr",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: { "@type": "EntryPoint", urlTemplate: `${origin}/catalogue?q={search_term_string}` },
+        "query-input": "required name=search_term_string",
+      },
     },
+    ...(site.faq.length
+      ? [
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: site.faq.slice(0, 10).map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+          },
+        ]
+      : []),
   ];
 }
 
@@ -92,4 +121,12 @@ export function productLd(product: Product, site: SiteContent, origin: string) {
       ],
     },
   ];
+}
+
+export function breadcrumbLd(items: [string, string][]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map(([name, item], i) => ({ "@type": "ListItem", position: i + 1, name, item })),
+  };
 }

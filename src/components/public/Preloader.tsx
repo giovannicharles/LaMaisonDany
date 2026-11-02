@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE } from "@/lib/motion";
 import { useSite } from "@/lib/siteContent";
-import { Rings, Sparkle, Waves } from "@/components/art/Ornaments";
+import { Waves } from "@/components/art/Ornaments";
 
 const FIRST = "LaMaison".split("");
 const SECOND = "Dany".split("");
@@ -101,9 +101,6 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
             />
           ))}
         </svg>
-        <Rings className="lmd-spin left-1/2 top-1/2 z-0 h-[820px] w-[820px] -translate-x-1/2 -translate-y-1/2 text-rose/15" />
-        <Sparkle className="lmd-float left-[18%] top-[28%] z-0 h-6 w-6 text-rose/50" />
-        <Sparkle className="lmd-float right-[20%] bottom-[30%] z-0 h-4 w-4 text-wine/40" style={{ animationDelay: "1.2s" }} />
         <div className="absolute inset-x-0 bottom-0 h-40 overflow-hidden">
           <div className="lmd-wave flex h-full w-[200%]">
             <Waves className="relative z-0 h-full w-1/2 text-rose/35" />

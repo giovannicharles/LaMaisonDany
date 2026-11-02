@@ -15,6 +15,61 @@
       "destination": "https://lmd-api-qixr.onrender.com/robots.txt"
     },
     {
+      "source": "/produit/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|skypeuripreview|embedly).*"
+        }
+      ],
+      "destination": "https://lmd-api-qixr.onrender.com/page/produit/:slug"
+    },
+    {
+      "source": "/catalogue",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|skypeuripreview|embedly).*"
+        }
+      ],
+      "destination": "https://lmd-api-qixr.onrender.com/page/catalogue"
+    },
+    {
+      "source": "/a-propos",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|skypeuripreview|embedly).*"
+        }
+      ],
+      "destination": "https://lmd-api-qixr.onrender.com/page/a-propos"
+    },
+    {
+      "source": "/contact",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|skypeuripreview|embedly).*"
+        }
+      ],
+      "destination": "https://lmd-api-qixr.onrender.com/page/contact"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|skypeuripreview|embedly).*"
+        }
+      ],
+      "destination": "https://lmd-api-qixr.onrender.com/page/"
+    },
+    {
       "source": "/((?!assets/|fonts/|products/|videos/).*)",
       "destination": "/index.html"
     }

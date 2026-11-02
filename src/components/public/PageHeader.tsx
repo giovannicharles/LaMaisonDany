@@ -1,6 +1,5 @@
 import { type ReactNode } from "react";
 import { CreamJar, LipstickArt, PerfumeBottle } from "@/components/art/Bottles";
-import { Rings, Sparkle, Sprig } from "@/components/art/Ornaments";
 import { optimizeImage } from "@/lib/images";
 import { pickPhotos, useShowcase } from "@/lib/showcase";
 
@@ -15,9 +14,6 @@ export default function PageHeader({ title, intro }: PageHeaderProps) {
 
   return (
     <section className="relative isolate overflow-hidden bg-blush-deep/60 pt-[108px]">
-      <Rings className="lmd-spin -left-44 -top-20 h-[460px] w-[460px] text-wine/10" />
-      <Sprig className="right-[38%] top-24 hidden h-[260px] rotate-6 text-wine/10 lg:block" />
-      <Sparkle className="lmd-float left-[46%] top-32 h-5 w-5 text-rose/50" />
       <div
         aria-hidden
         className="absolute -right-24 -top-24 h-[380px] w-[380px] rounded-full bg-blush-edge/50 blur-3xl"

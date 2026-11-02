@@ -1,3 +1,4 @@
+import { deepNoDash } from "@/lib/clean";
 import type {
   Product,
   Category,
@@ -92,6 +93,11 @@ function timeoutSignal(ms: number): AbortSignal {
 }
 
 async function publicRead<T>(live: (signal: AbortSignal) => Promise<ApiResponse<T>>, mock: () => T, isEmpty?: (data: T) => boolean): Promise<ApiResponse<T>> {
+  const res = await publicReadRaw(live, mock, isEmpty);
+  return inAdmin() ? res : { ...res, data: deepNoDash(res.data) };
+}
+
+async function publicReadRaw<T>(live: (signal: AbortSignal) => Promise<ApiResponse<T>>, mock: () => T, isEmpty?: (data: T) => boolean): Promise<ApiResponse<T>> {
   if (DATA_SOURCE === "api" || inAdmin()) return live(timeoutSignal(60000));
   if (DATA_SOURCE === "mock" || Date.now() < apiDownUntil) return { data: mock() };
   try {

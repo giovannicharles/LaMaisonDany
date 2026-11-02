@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { ArrowLeft, BarChart3, Eye, EyeOff, MessageSquare, Package, PenLine, ShieldCheck, Smartphone, type LucideIcon } from "lucide-react";
 import { api } from "@/api/client";
 import { AButton, Field, TextInput } from "@/components/admin/kit";
-import { Rings, Sparkle, Sprig } from "@/components/art/Ornaments";
 import { PerfumeBottle, WineBottle, CreamJar } from "@/components/art/Bottles";
 import { EASE } from "@/lib/motion";
 
@@ -100,41 +99,34 @@ export default function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <main className="lmd grid min-h-screen bg-blush md:grid-cols-[1.05fr_1fr]">
-      <aside className="relative isolate flex flex-col overflow-hidden bg-gradient-to-br from-wine to-wine-deep px-6 py-8 text-blush md:min-h-screen md:px-10 md:py-12 lg:px-14">
-        <Rings className="lmd-spin -left-40 -top-40 h-[520px] w-[520px] text-blush/10" />
-        <Rings className="lmd-spin -bottom-56 -right-40 h-[640px] w-[640px] text-blush/10" />
-        <Sprig className="right-6 top-24 hidden h-[300px] rotate-12 text-blush/10 lg:block" />
-        <Sparkle className="lmd-float right-[14%] top-[18%] h-5 w-5 text-blush/40" />
-        <Sparkle className="lmd-float bottom-[30%] left-[10%] h-4 w-4 text-blush/30" style={{ animationDelay: "1.2s" }} />
+      <aside className="relative isolate flex flex-col overflow-hidden bg-wine px-6 py-8 text-blush md:min-h-screen md:px-10 md:py-12 lg:px-14">
 
         <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }}>
           <p className="font-brand text-3xl leading-none md:text-4xl">
             LaMaison <span className="italic text-blush-edge">Dany</span>
           </p>
-          <p className="mt-2 text-sm uppercase tracking-[0.18em] text-blush/70">Espace d'administration</p>
+          <p className="mt-2 text-sm text-blush/75">Espace d'administration</p>
         </motion.div>
 
         <motion.div className="mt-8 md:mt-14" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1, ease: EASE }}>
           <h2 className="max-w-[16ch] font-brand text-[2rem] leading-[1.08] sm:text-4xl lg:text-5xl">
-            Votre boutique, <span className="italic text-blush-edge">entre vos mains.</span>
+            Gérez la boutique <span className="italic text-blush-edge">depuis un seul endroit.</span>
           </h2>
           <p className="mt-4 max-w-[44ch] text-base leading-relaxed text-blush/80">
-            Gérez les produits, les contenus et les demandes de vos clients depuis un seul endroit, sur ordinateur comme sur téléphone.
+            Produits, contenu du site, messages des clients et statistiques, sur ordinateur comme sur téléphone.
           </p>
         </motion.div>
 
-        <ul className="mt-8 hidden gap-3 sm:grid sm:grid-cols-2 md:mt-10 md:grid-cols-1 xl:grid-cols-2">
+        <ul className="mt-8 hidden gap-x-8 gap-y-5 sm:grid sm:grid-cols-2 md:mt-10 md:grid-cols-1 xl:grid-cols-2">
           {FEATURES.map(({ icon: Icon, title, text }, i) => (
             <motion.li
               key={title}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.25 + i * 0.08, ease: EASE }}
-              className="flex items-start gap-3 rounded-2xl bg-blush/[0.07] p-4 ring-1 ring-blush/15 backdrop-blur-sm"
+              className="flex items-start gap-3 border-t border-blush/20 pt-4"
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blush/15">
-                <Icon className="h-5 w-5" strokeWidth={1.6} />
-              </span>
+              <Icon className="mt-0.5 h-5 w-5 shrink-0 text-blush-edge" strokeWidth={1.6} />
               <span className="min-w-0">
                 <span className="block font-medium leading-tight">{title}</span>
                 <span className="mt-1 block text-sm leading-snug text-blush/75">{text}</span>
